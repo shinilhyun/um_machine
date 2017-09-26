@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd" >
+<properties>
+    
+    <!-- ==============SFTP 접속정보 설정============= -->
+    <entry key="SFTP_IP">192.168.0.151</entry>
+    <entry key="SFTP_PORT">22</entry>
+    <entry key="SFTP_ID"></entry>
+	
+	<!-- 저장될 로컬폴더 ex) C:/um/ftpTest; -->
+	<entry key="SFTP_TAGET">C:\Users\gee\Desktop\ftpTest</entry>
+	
+	<!-- ==============SFTP 접속정보 설정 END============= -->
+	
+	
+</properties>
