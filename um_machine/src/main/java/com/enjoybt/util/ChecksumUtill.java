@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -23,6 +24,28 @@ public class ChecksumUtill {
                 crc.update(buffer, 0, length);
             }
             in.close();
+            
+        } catch (IOException e) {
+            System.err.println(e);
+            System.exit(2);
+        }
+        System.out.println("checksum :" + crc.getValue());
+        return crc.getValue();
+    }
+
+    public long getRemoteCRC32Value(InputStream in,long fileSize) {
+        Checksum crc = (Checksum) new CRC32();
+        
+        try {
+            BufferedInputStream bf = new BufferedInputStream(in);
+            byte[] buffer = new byte[(int) fileSize];
+//            byte[] buffer = filesize;
+            int length = 0;
+            
+            while ((length = bf.read(buffer)) >= 0) {
+                crc.update(buffer, 0, length);
+            }
+            bf.close();
             
         } catch (IOException e) {
             System.err.println(e);

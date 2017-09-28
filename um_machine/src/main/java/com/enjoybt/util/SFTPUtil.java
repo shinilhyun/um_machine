@@ -1,5 +1,6 @@
 package com.enjoybt.util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -92,6 +93,7 @@ public class SFTPUtil{
             in = new FileInputStream(file);
             channelSftp.cd(dir);
             channelSftp.put(in, file.getName());
+            
         } catch (SftpException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -113,16 +115,11 @@ public class SFTPUtil{
      *
 
      * @param dir
-
-     *            저장할 경로(서버)
-
+     *            remote 경로(서버)
      * @param downloadFileName
-
      *            다운로드할 파일
-
      * @param path
-
-     *            저장될 공간
+     *            저장될 공간(local)
 
      */
 
@@ -131,9 +128,6 @@ public class SFTPUtil{
         InputStream in = null;
         FileOutputStream out = null;
         ChecksumUtill checksum = new ChecksumUtill();
-        
-        dir += "/" + downloadFileName.subSequence(0, 4) + "." + downloadFileName.subSequence(25, 33)
-                + ".t" + downloadFileName.substring(33,35) + "z";
         
         try {
             channelSftp.cd(dir);
@@ -145,16 +139,32 @@ public class SFTPUtil{
         }
 
         try {
-            out = new FileOutputStream(new File(path));
+            // 폴더경로 맞추기
+            String[] arr = downloadFileName.split("\\.");
+            System.out.println(arr[1]);
+            
+            path += "/" + downloadFileName.substring(0, 4) + "." + arr[1].substring(0, 8)
+                    + ".t" + arr[1].substring(8,10) + "z";
+            System.out.println(path);
+            File targetPath = new File(path);
+            
+            if (!targetPath.exists()) {     // 폴더 없으면 생성
+                targetPath.mkdirs();
+            }
+            
+            System.out.println("targetPath+fileName : " + path + "/" + downloadFileName);
+            File f = new File(path + "/"+ downloadFileName);
+            out = new FileOutputStream(f);
             int i;
             while ((i = in.read()) != -1) {
                 out.write(i);
             }
             
-            //checksum
-            if(checksum.getCRC32Value(path) != checksum.getCRC32Value(dir+ "/" +downloadFileName)){
-                return false;
-            }
+//            //checksum 구현 불가능 (sftp에서는 로컬 파일만 checksum 체크 가능)
+//            if(checksum.getCRC32Value(path + "/" + downloadFileName) != checksum.getRemoteCRC32Value(in,f.length())){
+//                System.out.println("체크섬 불일치");
+//                return false;
+//            }
             
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -180,6 +190,7 @@ public class SFTPUtil{
     public static boolean delete(String dir, String deleteFileName) {
         try {
             channelSftp.rm(deleteFileName);
+            
         } catch (SftpException e) {
             e.printStackTrace();
             return false;
