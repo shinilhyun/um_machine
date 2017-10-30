@@ -76,6 +76,7 @@ public class ApiController {
      * @param response
      * @throws Exception
      */
+//    @RequestMapping(value = "/url/nwp_file_down.php?", method = {RequestMethod.POST, RequestMethod.GET})
     @RequestMapping(value = "/um/getUmFile.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
     public void getUmFile(@RequestParam(value = "nwp") String nwp,
@@ -85,7 +86,7 @@ public class ApiController {
 	    
         String folder = ROOT + "/" + nwp + "." + tmfc.substring(0, 8)+".t"+tmfc.substring(8)+"z";
 	    
-        String fileName = nwp + "_v070_erea_" + sub + "_h0" + hh_ef + "." + tmfc + ".gb2";
+        String fileName = nwp + "_v070_erea_" + sub + "_h" + hh_ef + "." + tmfc + ".gb2";
 	    File file = new File(folder+"/"+fileName);
 	    response.setHeader("Content-Disposition", "attachment;filename=" + file.getName() + ";");
         response.setContentType("text/plain");

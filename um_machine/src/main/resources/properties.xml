@@ -3,16 +3,17 @@
 <properties>
     
     <!-- ==============SFTP 접속정보 설정============= -->
-    <entry key="SFTP_IP">192.168.0.27</entry>
-    <entry key="SFTP_PORT">10027</entry>
-    <entry key="SFTP_ID">vdrs</entry>
-    <entry key="SFTP_PW">vdrs00</entry>
+    <entry key="SFTP_IP">10.28.64.28</entry>
+    <entry key="SFTP_PORT">1022</entry>
+    <entry key="SFTP_ID">volcano</entry>
+    <entry key="SFTP_PW">ndms2kma01!</entry>
 	
 	<!-- 저장될 로컬폴더 ex) C:/um/ftpTest; -->
-	<entry key="SFTP_TARGET">C:/Users/gee/Desktop/ftpTest</entry>
+	<entry key="SFTP_TARGET">D:/세종시준비/um</entry>
 	
 	
 	<!-- ==============SFTP 접속정보 설정 END============= -->
 	
-	<entry key="api_root">C:/Users/gee/Desktop/ftpTest</entry>
+	<!--SFTP 로컬 폴더와 동일하게 설정  -->
+	<entry key="api_root">D:/세종시준비/um</entry>
 </properties>

@@ -65,7 +65,7 @@ public class SFTPController {
 	
 	@RequestMapping(value = "/um.do", method = RequestMethod.POST)
 	@ResponseBody
-	public void getUmData(@RequestParam(value = "filelist") String xmlData) throws Exception {
+	public void getUmData(@RequestParam(value = "fileList") String xmlData) throws Exception {
 		
 	    int port = Integer.parseInt(PORT);
 	    logger.info("ip : " + SFTP_IP);
