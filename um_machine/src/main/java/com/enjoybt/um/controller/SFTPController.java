@@ -17,9 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -65,7 +65,7 @@ public class SFTPController {
 	
 	@RequestMapping(value = "/um.do", method = RequestMethod.POST)
 	@ResponseBody
-	public void getUmData(@RequestParam(value = "fileList") String xmlData) throws Exception {
+	public void getUmData(@RequestBody String xmlData) throws Exception {
 		
 	    int port = Integer.parseInt(PORT);
 	    logger.info("ip : " + SFTP_IP);
@@ -82,7 +82,7 @@ public class SFTPController {
 		}
 		
 		//xml 파싱
-		logger.info("xmlData="+xmlData);
+		logger.info("xmlData \n"+xmlData);
 		Document doc = new SAXBuilder().build(new StringReader(xmlData));
 		// Document doc = new SAXBuilder().build(new File("C:\\WORK\\Simple.xml"));
 		
@@ -111,7 +111,7 @@ public class SFTPController {
             if (check == false) {
                 int i = 0;
                 
-			    while (check == false || i<3) {
+			    while ((check == false) || (i<3)) {
 			        
 			        logger.info("다운로드 실패! 재시도중...");
 	                check = sftpService.downSFtp(remote, fileName, local);
@@ -133,7 +133,7 @@ public class SFTPController {
             
             sftpService.deleteSFtp(remote, fileName);
                 
-        } 
+        }
         
         sftpService.disconnect();
 	}
