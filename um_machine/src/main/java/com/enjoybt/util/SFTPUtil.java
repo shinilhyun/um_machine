@@ -1,6 +1,5 @@
 package com.enjoybt.util;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,8 +13,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
-
-import com.enjoybt.util.ChecksumUtill;
 
 public class SFTPUtil{
 
@@ -189,12 +186,13 @@ public class SFTPUtil{
      */
     public static boolean delete(String dir, String deleteFileName) {
         try {
+            channelSftp.cd(dir);
             channelSftp.rm(deleteFileName);
             
         } catch (SftpException e) {
             e.printStackTrace();
             return false;
-        } 
+        }
         return true;
     }
 

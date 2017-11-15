@@ -97,7 +97,8 @@ public class SFTPController {
 		sftpService.init(SFTP_IP, port, ID, PW);
 		
         for (Element record : fileList) {
-		    
+
+            
 			String fileName = record.getValue();
 			String remote = filepath;
 			String local = LOCAL_FOLDER;
@@ -111,30 +112,23 @@ public class SFTPController {
             if (check == false) {
                 int i = 0;
                 
-			    while ((check == false) || (i<3)) {
+			    while ((check == true) || (i<3)) {
 			        
 			        logger.info("다운로드 실패! 재시도중...");
 	                check = sftpService.downSFtp(remote, fileName, local);
 	                i++;
 	            }
 			}
-            
+            if( check == true) {
+                
+                logger.info(fileName+" 다운로드 완료된 파일 삭제중...");
+                if (sftpService.deleteSFtp(remote, fileName)) {
+                    logger.info(fileName + "삭제완료");
+                }
+            }
         }
 
-        //완료된 파일 삭제
-        for (Element record : fileList) {
-            
-            String fileName = record.getValue();
-            String remote = filepath;
-            String local = LOCAL_FOLDER + "/"+fileName;
-            boolean deleteCheck = false;
-            
-            logger.info(fileName+" 다운로드 완료된 파일 삭제중...");
-            
-            sftpService.deleteSFtp(remote, fileName);
-                
-        }
-        
         sftpService.disconnect();
+        logger.info("sftp 연결 종료");
 	}
 }
