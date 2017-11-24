@@ -1,5 +1,7 @@
 package com.enjoybt.um.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.enjoybt.um.service.SftpService;
@@ -22,7 +24,7 @@ public class SftpServiceImpl implements SftpService {
 	public boolean downSFtp(String remote,String fileName,String local) throws Exception {
 		boolean result = false;
 		
-		if (remote != null 	&& remote.length() > 0 &&fileName !=null &&fileName.length()>0) {
+		if ((remote != null) 	&& (remote.length() > 0) &&(fileName !=null) &&(fileName.length()>0)) {
 			result = SFTPUtil.download(remote,fileName,local);
 		}
 		return result;
@@ -34,7 +36,7 @@ public class SftpServiceImpl implements SftpService {
 		
 		boolean result = false;
 		
-		if (remote != null 	&& remote.length() > 0 &&removeFileName.length()>0 && removeFileName !=null ) {
+		if ((remote != null) 	&& (remote.length() > 0) &&(removeFileName.length()>0) && (removeFileName !=null) ) {
 			result = SFTPUtil.delete(remote, removeFileName);
 		}
 		return result;
@@ -49,7 +51,10 @@ public class SftpServiceImpl implements SftpService {
 	@Override
 	public void disconnect() {
 		// TODO Auto-generated method stub
-		SFTPUtil.disconnection();	
+		SFTPUtil.disconnection();
 	}
 	
+	public List<String> getList(){
+	    return SFTPUtil.getList();
+	}
 }

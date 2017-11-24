@@ -6,9 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -179,6 +183,24 @@ public class SFTPUtil{
         
         System.out.println(downloadFileName+"다운로드 완료");
         return true;
+    }
+    
+    public static List<String> getList() {
+        List<String> fileList = new ArrayList<String>();
+        try{
+            
+            //경로 확인 필요
+            channelSftp.cd("/home/volcano/kma");
+            
+            Vector<LsEntry> files = channelSftp.ls("*.gb2");
+            
+            for (ChannelSftp.LsEntry file : files) {
+                fileList.add(file.getFilename());
+            }
+        } catch(Exception e) {
+            System.out.println("sftp list exception");
+        }
+        return fileList;
     }
     
     /**
