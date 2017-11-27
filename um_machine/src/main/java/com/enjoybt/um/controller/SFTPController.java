@@ -134,7 +134,7 @@ public class SFTPController {
 	
 	@RequestMapping(value = "/downWorking.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
-	public void downWorking(@RequestBody String xmlData) throws Exception {
+	public void downWorking(@RequestBody String xmlData) {
 	    
 	    int port = Integer.parseInt(PORT);
 	    logger.info("ip : " + SFTP_IP);
@@ -142,46 +142,52 @@ public class SFTPController {
 	    logger.info("id : " + ID);
 	    logger.info("PW : " + PW);
 	    
-	    
-	    sftpService.init(SFTP_IP, port, ID, PW);
-	    
-	    List<String> fileList = sftpService.getList();
-	    
-	    for (String file : fileList) {
+	    try{
 	        
+	        sftpService.init(SFTP_IP, port, ID, PW);
 	        
-	        String fileName = file;
+	        List<String> fileList = sftpService.getList();
 	        
-	        //경로 수정 필요
-	        String remote = "/home/volcano/kma";
-	        String local = LOCAL_FOLDER;
-	        boolean check = false;
-	        
-	        //ftp에서 파일 다운로드
-	        
-	        logger.info(fileName+" 다운로드 중...");
-	        check = sftpService.downSFtp(remote, fileName, local);
-	        
-	        if (check == false) {
-	            int i = 0;
+	        for (String file : fileList) {
 	            
-	            while ((check == true) || (i<3)) {
+	            
+	            String fileName = file;
+	            
+	            //경로 수정 필요
+	            String remote = "/home/volcano/kma";
+	            String local = LOCAL_FOLDER;
+	            boolean check = false;
+	            
+	            //ftp에서 파일 다운로드
+	            
+	            logger.info(fileName+" 다운로드 중...");
+	            check = sftpService.downSFtp(remote, fileName, local);
+	            
+	            if (check == false) {
+	                int i = 0;
 	                
-	                logger.info("다운로드 실패! 재시도중...");
-	                check = sftpService.downSFtp(remote, fileName, local);
-	                i++;
+	                while ((check == true) || (i<3)) {
+	                    
+	                    logger.info("다운로드 실패! 재시도중...");
+	                    check = sftpService.downSFtp(remote, fileName, local);
+	                    i++;
+	                }
+	            }
+	            if( check == true) {
+	                
+	                logger.info(fileName+" 다운로드 완료된 파일 삭제중...");
+	                if (sftpService.deleteSFtp(remote, fileName)) {
+	                    logger.info(fileName + "삭제완료");
+	                }
 	            }
 	        }
-	        if( check == true) {
-	            
-	            logger.info(fileName+" 다운로드 완료된 파일 삭제중...");
-	            if (sftpService.deleteSFtp(remote, fileName)) {
-	                logger.info(fileName + "삭제완료");
-	            }
-	        }
+	        
+	        sftpService.disconnect();
+	        logger.info("sftp 연결 종료");
+	    } catch(Exception e) {
+	        logger.info("sftp error");
+	    } finally {
+	        sftpService.disconnect();
 	    }
-	    
-	    sftpService.disconnect();
-	    logger.info("sftp 연결 종료");
 	}
 }
