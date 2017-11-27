@@ -114,7 +114,7 @@ public class SFTPController {
                 if (check == false) {
                     int i = 0;
                     
-                    while ((check == true) || (i<3)) {
+                    while ((check == true) || (i<1)) {
                         
                         logger.info("다운로드 실패! 재시도중...");
                         check = sftpService.downSFtp(remote, fileName, local);
@@ -174,7 +174,7 @@ public class SFTPController {
 	            if (check == false) {
 	                int i = 0;
 	                
-	                while ((check == true) || (i<3)) {
+	                while ((check == true) || (i<1)) {
 	                    
 	                    logger.info("다운로드 실패! 재시도중...");
 	                    check = sftpService.downSFtp(remote, fileName, local);
