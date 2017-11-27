@@ -65,7 +65,7 @@ public class SFTPController {
 	
 	@RequestMapping(value = "/um.do", method = RequestMethod.POST)
 	@ResponseBody
-	public void getUmData(@RequestBody String xmlData) throws Exception {
+	public void getUmData(@RequestBody String xmlData) {
 		
 	    int port = Integer.parseInt(PORT);
 	    logger.info("ip : " + SFTP_IP);
@@ -81,55 +81,63 @@ public class SFTPController {
 			guestIp = req.getRemoteAddr();
 		}
 		
-		//xml 파싱
-		logger.info("xmlData \n"+xmlData);
-		Document doc = new SAXBuilder().build(new StringReader(xmlData));
-		// Document doc = new SAXBuilder().build(new File("C:\\WORK\\Simple.xml"));
-		
-		logger.info("guestIp="+guestIp);
-		
-		Element root = doc.getRootElement();
-		String filepath = root.getChild("filepath").getValue();
-		String filesize = root.getChild("filesize").getValue();
-		Element files = root.getChild("filelists");
-		List<Element> fileList  = files.getChildren();
-		
-		sftpService.init(SFTP_IP, port, ID, PW);
-		
-        for (Element record : fileList) {
-
+        try{
             
-			String fileName = record.getValue();
-			String remote = filepath;
-			String local = LOCAL_FOLDER;
-			boolean check = false;
-			
-			//ftp에서 파일 다운로드
-			
-			logger.info(fileName+" 다운로드 중...");
-			check = sftpService.downSFtp(remote, fileName, local);
-			
-            if (check == false) {
-                int i = 0;
+            //xml 파싱
+            logger.info("xmlData \n"+xmlData);
+            Document doc = new SAXBuilder().build(new StringReader(xmlData));
+            // Document doc = new SAXBuilder().build(new File("C:\\WORK\\Simple.xml"));
+            
+            logger.info("guestIp="+guestIp);
+            
+            Element root = doc.getRootElement();
+            String filepath = root.getChild("filepath").getValue();
+            String filesize = root.getChild("filesize").getValue();
+            Element files = root.getChild("filelists");
+            List<Element> fileList  = files.getChildren();
+            
+            sftpService.init(SFTP_IP, port, ID, PW);
+            
+            for (Element record : fileList) {
                 
-			    while ((check == true) || (i<3)) {
-			        
-			        logger.info("다운로드 실패! 재시도중...");
-	                check = sftpService.downSFtp(remote, fileName, local);
-	                i++;
-	            }
-			}
-            if( check == true) {
                 
-                logger.info(fileName+" 다운로드 완료된 파일 삭제중...");
-                if (sftpService.deleteSFtp(remote, fileName)) {
-                    logger.info(fileName + "삭제완료");
+                String fileName = record.getValue();
+                String remote = filepath;
+                String local = LOCAL_FOLDER;
+                boolean check = false;
+                
+                //ftp에서 파일 다운로드
+                
+                logger.info(fileName+" 다운로드 중...");
+                check = sftpService.downSFtp(remote, fileName, local);
+                
+                if (check == false) {
+                    int i = 0;
+                    
+                    while ((check == true) || (i<3)) {
+                        
+                        logger.info("다운로드 실패! 재시도중...");
+                        check = sftpService.downSFtp(remote, fileName, local);
+                        i++;
+                    }
+                }
+                if( check == true) {
+                    
+                    logger.info(fileName+" 다운로드 완료된 파일 삭제중...");
+                    if (sftpService.deleteSFtp(remote, fileName)) {
+                        logger.info(fileName + "삭제완료");
+                    }
                 }
             }
+//            sftpService.disconnect();
+//            logger.info("sftp 연결 종료");
+            
+        } catch(Exception e) {
+            logger.info("um.do error!");
+        } finally {
+            sftpService.disconnect();
+            logger.info("sftp 연결 종료");
         }
-
-        sftpService.disconnect();
-        logger.info("sftp 연결 종료");
 	}
 	
 	@RequestMapping(value = "/downWorking.do", method = {RequestMethod.POST, RequestMethod.GET})
@@ -182,12 +190,13 @@ public class SFTPController {
 	            }
 	        }
 	        
-	        sftpService.disconnect();
-	        logger.info("sftp 연결 종료");
+//	        sftpService.disconnect();
+//	        logger.info("sftp 연결 종료");
 	    } catch(Exception e) {
 	        logger.info("sftp error");
 	    } finally {
 	        sftpService.disconnect();
+	        logger.info("sftp 연결 종료");
 	    }
 	}
 }
