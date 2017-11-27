@@ -9,11 +9,14 @@
     <entry key="SFTP_PW">ndms2kma01!</entry>
 	
 	<!-- 저장될 로컬폴더 ex) C:/um/ftpTest; -->
-	<entry key="SFTP_TARGET">/DATA1/um</entry>
+	<entry key="SFTP_TARGET">D:\kma</entry>
 	
 	
 	<!-- ==============SFTP 접속정보 설정 END============= -->
 	
 	<!--SFTP 로컬 폴더와 동일하게 설정  -->
-	<entry key="api_root">/DATA1/um</entry>
+	<entry key="api_root">D:\kma</entry>
+	
+	<!-- 원격 폴더구조(/에서 기상장파일까지경로) -->
+	<entry key="remote_root">/home/k...</entry>
 </properties>

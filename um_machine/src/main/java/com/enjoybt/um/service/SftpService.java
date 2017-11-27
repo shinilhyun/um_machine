@@ -3,6 +3,10 @@ package com.enjoybt.um.service;
 import java.util.List;
 
 public interface SftpService {
+    
+    public void run(String xmlData);
+    
+    public void downWorking();
 
 	public void init(String ip,int port,String id,String pw);
 	
