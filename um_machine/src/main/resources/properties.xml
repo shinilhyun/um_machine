@@ -3,10 +3,15 @@
 <properties>
     
     <!-- ==============SFTP 접속정보 설정============= -->
-    <entry key="SFTP_IP">10.28.64.28</entry>
+    <!-- <entry key="SFTP_IP">10.28.64.28</entry>
     <entry key="SFTP_PORT">1022</entry>
     <entry key="SFTP_ID">volcano</entry>
-    <entry key="SFTP_PW">ndms2kma01!</entry>
+    <entry key="SFTP_PW">ndms2kma01!</entry> -->
+	
+    <entry key="SFTP_IP">192.168.0.27</entry>
+    <entry key="SFTP_PORT">10027</entry>
+    <entry key="SFTP_ID">vdrs</entry>
+    <entry key="SFTP_PW">vdrs00</entry>
 	
 	<!-- 저장될 로컬폴더 ex) C:/um/ftpTest; -->
 	<entry key="SFTP_TARGET">D:\kma</entry>
@@ -18,5 +23,5 @@
 	<entry key="api_root">D:\kma</entry>
 	
 	<!-- 원격 폴더구조(/에서 기상장파일까지경로) -->
-	<entry key="remote_root">/home/k...</entry>
+	<entry key="remote_root">/vdrs</entry>
 </properties>

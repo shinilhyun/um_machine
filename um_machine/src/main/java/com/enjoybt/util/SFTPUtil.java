@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
+
+import org.springframework.beans.factory.annotation.Value;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -23,6 +26,7 @@ public class SFTPUtil{
 	private static Session session = null;
     private static Channel channel = null;
     private static ChannelSftp channelSftp = null;
+    private static String REMOTE_ROOT = "/vdrs";
 
     /**
 
@@ -121,23 +125,18 @@ public class SFTPUtil{
      *            다운로드할 파일
      * @param path
      *            저장될 공간(local)
+     * @throws SftpException
 
      */
 
-    public static boolean download(String dir, String downloadFileName, String path) {
+    public static boolean download(String dir, String downloadFileName, String path) throws SftpException {
 
         InputStream in = null;
         FileOutputStream out = null;
         ChecksumUtill checksum = new ChecksumUtill();
         
-        try {
-            channelSftp.cd(dir);
-            in = channelSftp.get(downloadFileName);
-        } catch (SftpException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return false;
-        }
+        channelSftp.cd(dir);
+        in = channelSftp.get(downloadFileName);
 
         try {
             // 폴더경로 맞추기
@@ -169,14 +168,12 @@ public class SFTPUtil{
             
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
             return false;
         } finally {
             try {
                 out.close();
                 in.close();
             } catch (IOException e) {
-                e.printStackTrace();
                 return false;
             }
         }
@@ -190,7 +187,7 @@ public class SFTPUtil{
         try{
             
             //경로 확인 필요
-            channelSftp.cd("/home/volcano/kma");
+            channelSftp.cd(REMOTE_ROOT);
             
             Vector<LsEntry> files = channelSftp.ls("*.gb2");
             
@@ -224,7 +221,9 @@ public class SFTPUtil{
 
      */
     public static void disconnection() {
-        channelSftp.quit();
+            if(channelSftp != null) {
+                channelSftp.quit();
+            }
     }
 }
 

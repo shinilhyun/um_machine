@@ -1,5 +1,6 @@
 package com.enjoybt.um.service.impl;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.enjoybt.um.service.SftpService;
 import com.enjoybt.util.SFTPUtil;
+import com.jcraft.jsch.SftpException;
 
 @Service
 public class SftpServiceImpl implements SftpService {
@@ -53,7 +55,7 @@ public class SftpServiceImpl implements SftpService {
             String filesize = root.getChild("filesize").getValue();
             Element files = root.getChild("filelists");
             List<Element> fileList  = files.getChildren();
-            
+            disconnect();
             init(SFTP_IP, port, ID, PW);
             
             for (Element record : fileList) {
@@ -89,17 +91,19 @@ public class SftpServiceImpl implements SftpService {
 //            sftpService.disconnect();
 //            logger.info("sftp 연결 종료");
             
+        } catch (SftpException se) {
+           logger.info("이미 SFTP 접속 끊김");
+           return;
         } catch(Exception e) {
             logger.info("um.do error!");
         } finally {
             disconnect();
-            logger.info("sftp 연결 종료");
         }
         
     }
     
     @Override
-    public synchronized void downWorking() {
+    public void downWorking() {
         int port = Integer.parseInt(PORT);
         logger.info("ip : " + SFTP_IP);
         logger.info("port : " + PORT);
@@ -149,11 +153,13 @@ public class SftpServiceImpl implements SftpService {
             
 //          sftpService.disconnect();
 //          logger.info("sftp 연결 종료");
+        } catch(SftpException se) {
+            logger.info("이미 sftp 연결이 끊김");
+            return;
         } catch(Exception e) {
-            logger.info("sftp error");
+            logger.info("downWorking error");
         } finally {
             disconnect();
-            logger.info("sftp 연결 종료");
         }
     }
     
@@ -192,13 +198,14 @@ public class SftpServiceImpl implements SftpService {
 	@Override
 	public void init(String ip, int port, String id, String pw) {
 		// TODO Auto-generated method stub
+	    logger.info("SFTP init!!!");
 		SFTPUtil.init(ip, id, pw, port);
 	}
 	
 	@Override
 	public void disconnect() {
 		// TODO Auto-generated method stub
-	    logger.info("sfpt 연결 종료");
+	    logger.info("원격스토리지 접속 종료");
 		SFTPUtil.disconnection();
 	}
 	

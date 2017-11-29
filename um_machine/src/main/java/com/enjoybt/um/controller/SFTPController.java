@@ -79,8 +79,15 @@ public class SFTPController {
 	
 	@RequestMapping(value = "/downWorking.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
-	public void downWorking(@RequestBody String xmlData) {
-	    
+	public void downWorking() {
+	    logger.info("downWorking.do");
 	   sftpService.downWorking();
+	}
+
+	@RequestMapping(value = "/disconnect.do", method = {RequestMethod.POST, RequestMethod.GET})
+	@ResponseBody
+	public void disconnect() {
+	    logger.info("disconnect.do");
+	    sftpService.disconnect();
 	}
 }
