@@ -11,7 +11,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.inject.Singleton;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -21,11 +24,20 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
+
 public class SFTPUtil{
 
+    private static SFTPUtil sftpUtil;
+    
+    private SFTPUtil(){}
+    
+    public static synchronized SFTPUtil getInstance() {
+        return sftpUtil;
+    }
+    
 	private static Session session = null;
     private static Channel channel = null;
-    private static ChannelSftp channelSftp = null;
+    public static ChannelSftp channelSftp = null;
     private static String REMOTE_ROOT = "/vdrs";
 
     /**
@@ -57,7 +69,8 @@ public class SFTPUtil{
         JSch jsch = new JSch();
 
         try {
-
+            
+            
             session = jsch.getSession(userName, host, port);
             session.setPassword(password);
 
@@ -221,9 +234,18 @@ public class SFTPUtil{
 
      */
     public static void disconnection() {
-            if(channelSftp != null) {
+        try{
+                session.disconnect();
                 channelSftp.quit();
-            }
+                channel.disconnect();
+                
+                channelSftp = null;
+                session = null;
+                channel = null;
+            
+        } catch (NullPointerException ne) {
+            //System.out.println("이미 disconnect 되어있음");
+        }
     }
 }
 

@@ -1,5 +1,7 @@
 package com.enjoybt.um.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.util.Date;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -15,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,22 +76,37 @@ public class SFTPController {
 	    logger.info("port : " + PORT);
 	    logger.info("id : " + ID);
 	    logger.info("PW : " + PW);
-		
+	    
+	    sftpService.disconnect();
 	    sftpService.run(xmlData);
        
 	}
 	
 	@RequestMapping(value = "/downWorking.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
-	public void downWorking() {
+	public void downWorking(HttpServletResponse res) throws IOException {
+
 	    logger.info("downWorking.do");
-	   sftpService.downWorking();
+	    PrintWriter out = null;
+	    res.setContentType("text/html;charset=utf-8");
+        out = res.getWriter();
+        out.println("원격 스토리지의 기상자료 다운로드를 요청하였습니다...");
+        out.flush();
+        out.close();
+        sftpService.disconnect();
+        sftpService.downWorking();
 	}
 
 	@RequestMapping(value = "/disconnect.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
-	public void disconnect() {
+	public void disconnect(HttpServletResponse res) throws IOException {
 	    logger.info("disconnect.do");
+	    PrintWriter out;
+        res.setContentType("text/html;charset=utf-8");
+        out = res.getWriter();
+        out.println("원격 스토리지와의 연결 종료를 요청하였습니다");
+        out.flush();
+        out.close();
 	    sftpService.disconnect();
 	}
 }

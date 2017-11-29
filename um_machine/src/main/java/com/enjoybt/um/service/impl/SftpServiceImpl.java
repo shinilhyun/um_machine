@@ -39,9 +39,16 @@ public class SftpServiceImpl implements SftpService {
     @Value("#{config['remote_root']}")
     private String REMOTE_ROOT;
     
+    private SFTPUtil sftpUtil = SFTPUtil.getInstance();
     
     @Override
     public synchronized void run(String xmlData) {
+        
+        if(sftpUtil.channelSftp != null) {
+            System.out.println("channelSftp  이미 존재");
+            return;
+        }
+        
         try{
             //xml 파싱
             logger.info("xmlData \n"+xmlData);
@@ -69,17 +76,7 @@ public class SftpServiceImpl implements SftpService {
                 
                 logger.info(fileName+" 다운로드 중...");
                 check = downSFtp(remote, fileName, local);
-                
-                if (check == false) {
-                    int i = 0;
-                    
-                    while ((check == true) || (i<1)) {
-                        
-                        logger.info("다운로드 실패! 재시도중...");
-                        check = downSFtp(remote, fileName, local);
-                        i++;
-                    }
-                }
+
                 if( check == true) {
                     
                     logger.info(fileName+" 다운로드 완료된 파일 삭제중...");
@@ -104,15 +101,17 @@ public class SftpServiceImpl implements SftpService {
     
     @Override
     public void downWorking() {
+        
+        if(sftpUtil.channelSftp != null) {
+            System.out.println("channelSftp  이미 존재");
+            return;
+        }
+        
+        logger.info("start downWorking...........");
+        
         int port = Integer.parseInt(PORT);
-        logger.info("ip : " + SFTP_IP);
-        logger.info("port : " + PORT);
-        logger.info("id : " + ID);
-        logger.info("PW : " + PW);
         
         try{
-            disconnect();
-            
             init(SFTP_IP, port, ID, PW);
             
             List<String> fileList = getList();
@@ -132,16 +131,6 @@ public class SftpServiceImpl implements SftpService {
                 logger.info(fileName+" 다운로드 중...");
                 check = downSFtp(remote, fileName, local);
                 
-                if (check == false) {
-                    int i = 0;
-                    
-                    while ((check == true) || (i<1)) {
-                        
-                        logger.info("다운로드 실패! 재시도중...");
-                        check = downSFtp(remote, fileName, local);
-                        i++;
-                    }
-                }
                 if( check == true) {
                     
                     logger.info(fileName+" 다운로드 완료된 파일 삭제중...");
@@ -178,7 +167,7 @@ public class SftpServiceImpl implements SftpService {
 		boolean result = false;
 		
 		if ((remote != null) 	&& (remote.length() > 0) &&(fileName !=null) &&(fileName.length()>0)) {
-			result = SFTPUtil.download(remote,fileName,local);
+			result = sftpUtil.download(remote,fileName,local);
 		}
 		return result;
 	}
@@ -190,7 +179,7 @@ public class SftpServiceImpl implements SftpService {
 		boolean result = false;
 		
 		if ((remote != null) 	&& (remote.length() > 0) &&(removeFileName.length()>0) && (removeFileName !=null) ) {
-			result = SFTPUtil.delete(remote, removeFileName);
+			result = sftpUtil.delete(remote, removeFileName);
 		}
 		return result;
 	}
@@ -199,17 +188,17 @@ public class SftpServiceImpl implements SftpService {
 	public void init(String ip, int port, String id, String pw) {
 		// TODO Auto-generated method stub
 	    logger.info("SFTP init!!!");
-		SFTPUtil.init(ip, id, pw, port);
+	    sftpUtil.init(ip, id, pw, port);
 	}
 	
 	@Override
 	public void disconnect() {
 		// TODO Auto-generated method stub
 	    logger.info("원격스토리지 접속 종료");
-		SFTPUtil.disconnection();
+	    sftpUtil.disconnection();
 	}
 	
 	public List<String> getList(){
-	    return SFTPUtil.getList();
+	    return sftpUtil.getList();
 	}
 }
