@@ -77,7 +77,6 @@ public class SFTPController {
 	    logger.info("id : " + ID);
 	    logger.info("PW : " + PW);
 	    
-	    sftpService.disconnect();
 	    sftpService.run(xmlData);
        
 	}
@@ -93,7 +92,6 @@ public class SFTPController {
         out.println("원격 스토리지의 기상자료 다운로드를 요청하였습니다...");
         out.flush();
         out.close();
-        sftpService.disconnect();
         sftpService.downWorking();
 	}
 

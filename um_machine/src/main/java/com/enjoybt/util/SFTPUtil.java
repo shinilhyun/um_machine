@@ -32,6 +32,11 @@ public class SFTPUtil{
     private SFTPUtil(){}
     
     public static synchronized SFTPUtil getInstance() {
+        
+        if (sftpUtil == null) {
+           sftpUtil = new SFTPUtil();
+        }
+        
         return sftpUtil;
     }
     
@@ -69,8 +74,6 @@ public class SFTPUtil{
         JSch jsch = new JSch();
 
         try {
-            
-            
             session = jsch.getSession(userName, host, port);
             session.setPassword(password);
 
