@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,28 +84,15 @@ public class SFTPController {
 	
 	@RequestMapping(value = "/downWorking.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
-	public void downWorking(HttpServletResponse res) throws IOException {
-
+	public void downWorking() {
 	    logger.info("downWorking.do");
-	    PrintWriter out = null;
-	    res.setContentType("text/html;charset=utf-8");
-        out = res.getWriter();
-        out.println("원격 스토리지의 기상자료 다운로드를 요청하였습니다...");
-        out.flush();
-        out.close();
         sftpService.downWorking();
 	}
 
 	@RequestMapping(value = "/disconnect.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
-	public void disconnect(HttpServletResponse res) throws IOException {
+	public void disconnect() throws IOException {
 	    logger.info("disconnect.do");
-	    PrintWriter out;
-        res.setContentType("text/html;charset=utf-8");
-        out = res.getWriter();
-        out.println("원격 스토리지와의 연결 종료를 요청하였습니다");
-        out.flush();
-        out.close();
 	    sftpService.disconnect();
 	}
 }
