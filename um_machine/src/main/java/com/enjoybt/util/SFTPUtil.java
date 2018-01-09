@@ -43,7 +43,7 @@ public class SFTPUtil{
 	private static Session session = null;
     private static Channel channel = null;
     public static ChannelSftp channelSftp = null;
-    private static String REMOTE_ROOT = "/vdrs";
+    private static String REMOTE_ROOT = "/home/volcano/kma2volcano";
 
     /**
 
@@ -166,6 +166,13 @@ public class SFTPUtil{
             
             if (!targetPath.exists()) {     // 폴더 없으면 생성
                 targetPath.mkdirs();
+                String cmd = "chmod -R 777 " + targetPath;
+                Runtime rt = Runtime.getRuntime();
+                Process p = rt.exec(cmd);
+                try {
+                    p.waitFor();
+                } catch (InterruptedException e) {
+                }
             }
             
             System.out.println("targetPath+fileName : " + path + "/" + downloadFileName);
