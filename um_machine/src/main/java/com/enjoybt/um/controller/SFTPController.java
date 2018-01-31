@@ -70,7 +70,7 @@ public class SFTPController {
 	
 	@RequestMapping(value = "/um.do", method = RequestMethod.POST)
 	@ResponseBody
-	public void getUmData(@RequestBody String xmlData) {
+	public String getUmData(@RequestBody String xmlData) {
 		
 	    
 	    logger.info("ip : " + SFTP_IP);
@@ -80,6 +80,7 @@ public class SFTPController {
 	    
 	    sftpService.run(xmlData);
        
+	    return "success";
 	}
 	
 	@RequestMapping(value = "/downWorking.do", method = {RequestMethod.POST, RequestMethod.GET})
