@@ -159,8 +159,7 @@ public class SFTPUtil{
             String[] arr = downloadFileName.split("\\.");
             System.out.println(arr[1]);
             
-            path += "/" + downloadFileName.substring(0, 4) + "." + arr[1].substring(0, 8)
-                    + ".t" + arr[1].substring(8,10) + "z";
+            path += "/temp";
             System.out.println(path);
             File targetPath = new File(path);
             
@@ -175,12 +174,6 @@ public class SFTPUtil{
             while ((i = in.read()) != -1) {
                 out.write(i);
             }
-            
-//            //checksum 구현 불가능 (sftp에서는 로컬 파일만 checksum 체크 가능)
-//            if(checksum.getCRC32Value(path + "/" + downloadFileName) != checksum.getRemoteCRC32Value(in,f.length())){
-//                System.out.println("체크섬 불일치");
-//                return false;
-//            }
             
         } catch (IOException e) {
             // TODO Auto-generated catch block

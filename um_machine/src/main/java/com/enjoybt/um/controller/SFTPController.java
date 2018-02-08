@@ -22,6 +22,7 @@ import org.springframework.http.HttpRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,15 +71,17 @@ public class SFTPController {
 	
 	@RequestMapping(value = "/um.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String getUmData(@RequestBody String xmlData) {
+	public String getUmData(@RequestBody MultiValueMap<String,String> map) {
 		
 	    
 	    logger.info("ip : " + SFTP_IP);
 	    logger.info("port : " + PORT);
 	    logger.info("id : " + ID);
 	    logger.info("PW : " + PW);
-	    
-	    sftpService.run(xmlData);
+
+		String xmlData = map.getFirst("xmlData");
+		String log_sn = map.getFirst("log_sn");
+	    sftpService.run(xmlData, log_sn);
        
 	    return "success";
 	}

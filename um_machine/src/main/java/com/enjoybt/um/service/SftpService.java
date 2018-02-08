@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface SftpService {
     
-    public void run(String xmlData);
+    public void run(String xmlData, String log_sn);
     
     public void downWorking();
 
