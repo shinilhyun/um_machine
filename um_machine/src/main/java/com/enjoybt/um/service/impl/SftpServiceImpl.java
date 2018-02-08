@@ -46,8 +46,11 @@ public class SftpServiceImpl implements SftpService {
     @Value("#{config['remote_root']}")
     private String REMOTE_ROOT;
     
-    @Value("#{config['vdrs_url']}")
+    @Value("#{config['VDRS_URL']}")
     private String VDRS_URL;
+
+    @Value("#{config['SFTP_TEMPFOLDER']}")
+    private String TEMP_FOLDER;
 
     private SFTPUtil sftpUtil = SFTPUtil.getInstance();
 
@@ -79,33 +82,38 @@ public class SftpServiceImpl implements SftpService {
 
                 String fileName = record.getValue();
                 String remote = filepath;
-                String local = LOCAL_FOLDER;
+                String local = TEMP_FOLDER;
                 boolean check = false;
 
                 //ftp에서 파일 다운로드
 
                 logger.info(fileName + " 다운로드 중...");
-                check = downSFtp(remote, fileName, local);
+                //check = downSFtp(remote, fileName, local);
 
                 if (check == true) {
 
                     logger.info(fileName + " 다운로드 완료된 파일 삭제중...");
-                    if (deleteSFtp(remote, fileName)) {
-                        logger.info(fileName + "삭제완료");
-                    }
+//                    if (deleteSFtp(remote, fileName)) {
+//                        logger.info(fileName + "삭제완료");
+//                    }
                 }
                 //TODO 다운로드 받은 path/temp 폴더의 파일 체크 후 화산 시스템으로 결과 날려주는 부분 필요
             }
-            if(checkAndMove(fileList)){
-                sendResult(log_sn,"Y");
+            
+            if (checkAndMove(fileList)) {
+                logger.info("기상장파일 체크완료 : 결과 Y, log_sn : " + log_sn);
+                sendResult(log_sn, "Y");
             } else {
-                sendResult(log_sn,"F");
+                logger.info("기상장파일 체크완료 : 결과 F, log_sn : " + log_sn);
+                sendResult(log_sn, "F");
             }
 
-        } catch (SftpException se) {
-            logger.info("이미 SFTP 접속 끊김");
-            return;
-        } catch (Exception e) {
+        }
+//        catch (SftpException se) {
+//            logger.info("이미 SFTP 접속 끊김");
+//            return;
+//        }
+        catch (Exception e) {
             logger.info("um.do error!");
         } finally {
             disconnect();
@@ -208,7 +216,7 @@ public class SftpServiceImpl implements SftpService {
 
     public boolean checkAndMove(List<Element> fileList){
         boolean result = true;
-        String tempFolder = LOCAL_FOLDER + "/temp";
+        
         String targetFolder = null;
         for (Element record : fileList) {
             
@@ -220,15 +228,23 @@ public class SftpServiceImpl implements SftpService {
             
             if(arr[3].equals("pres")){
                 fileName2 = arr[0]+"_"+arr[1]+"_"+arr[2]+"_unis_"+arr[4];
-                File f = new File(tempFolder + "/" + fileName2);
+                File f = new File(TEMP_FOLDER + "/" + fileName2);
                 
                 if(f.exists()){
+                    logger.info(arr[4] + "파일 검증 완료 파일이동 시작");
                     // 파일 1, 2 모두 경로 이동
                     targetFolder = LOCAL_FOLDER + "/r120." + fileName.substring(25, 33) + ".t" + fileName.substring(33, 35) + "z";
                     
-                    fileCopy(tempFolder + "/" + fileName, targetFolder + "/" + fileName);
-                    fileCopy(tempFolder + "/" + fileName2, targetFolder + "/" + fileName2);
+                    File tf = new File(targetFolder);
+                    
+                    if(!tf.exists()) {
+                        tf.mkdirs();
+                    }
+
+                    fileCopy(TEMP_FOLDER + "/" + fileName, targetFolder + "/" + fileName);
+                    fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
                 } else {
+                    logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
                     result = false;
                 }
             }
@@ -256,7 +272,11 @@ public class SftpServiceImpl implements SftpService {
             outputStream.close();
             inputStream.close();
 
-            System.out.println(inFileName + "복사시작 완료");
+            System.out.println(inFileName + "복사 완료");
+            
+            //복사후 파일 삭제
+            File f = new File(inFileName);
+            f.delete();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -269,7 +289,7 @@ public class SftpServiceImpl implements SftpService {
         map.add("flag",flag);
 
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.postForObject(VDRS_URL, map, String.class);
+        String result = restTemplate.postForObject(VDRS_URL, map, String.class);
     }
 
 }

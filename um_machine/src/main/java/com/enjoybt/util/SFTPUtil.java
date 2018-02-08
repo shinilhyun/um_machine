@@ -159,7 +159,6 @@ public class SFTPUtil{
             String[] arr = downloadFileName.split("\\.");
             System.out.println(arr[1]);
             
-            path += "/temp";
             System.out.println(path);
             File targetPath = new File(path);
             
