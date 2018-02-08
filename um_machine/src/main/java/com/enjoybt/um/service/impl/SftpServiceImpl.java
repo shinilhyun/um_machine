@@ -1,7 +1,11 @@
 package com.enjoybt.um.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.channels.FileChannel;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -11,6 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import com.enjoybt.um.service.SftpService;
 import com.enjoybt.util.SFTPUtil;
@@ -38,6 +45,9 @@ public class SftpServiceImpl implements SftpService {
 
     @Value("#{config['remote_root']}")
     private String REMOTE_ROOT;
+    
+    @Value("#{config['vdrs_url']}")
+    private String VDRS_URL;
 
     private SFTPUtil sftpUtil = SFTPUtil.getInstance();
 
@@ -86,7 +96,11 @@ public class SftpServiceImpl implements SftpService {
                 }
                 //TODO 다운로드 받은 path/temp 폴더의 파일 체크 후 화산 시스템으로 결과 날려주는 부분 필요
             }
-
+            if(checkAndMove(fileList)){
+                sendResult(log_sn,"Y");
+            } else {
+                sendResult(log_sn,"F");
+            }
 
         } catch (SftpException se) {
             logger.info("이미 SFTP 접속 끊김");
@@ -193,13 +207,69 @@ public class SftpServiceImpl implements SftpService {
     }
 
     public boolean checkAndMove(List<Element> fileList){
-        boolean result = false;
+        boolean result = true;
+        String tempFolder = LOCAL_FOLDER + "/temp";
+        String targetFolder = null;
         for (Element record : fileList) {
+            
+            //r120_v070_erea_pres_h066.2017111000
+            
             String fileName = record.getValue();
-            String tempFolder = LOCAL_FOLDER + "/temp";
+            String arr[] = fileName.split("_");
+            String fileName2 = null;
+            
+            if(arr[3].equals("pres")){
+                fileName2 = arr[0]+"_"+arr[1]+"_"+arr[2]+"_unis_"+arr[4];
+                File f = new File(tempFolder + "/" + fileName2);
+                
+                if(f.exists()){
+                    // 파일 1, 2 모두 경로 이동
+                    targetFolder = LOCAL_FOLDER + "/r120." + fileName.substring(25, 33) + ".t" + fileName.substring(33, 35) + "z";
+                    
+                    fileCopy(tempFolder + "/" + fileName, targetFolder + "/" + fileName);
+                    fileCopy(tempFolder + "/" + fileName2, targetFolder + "/" + fileName2);
+                } else {
+                    result = false;
+                }
+            }
 
         }
         return result;
+    }
+    
+    public void fileCopy(String inFileName, String outFileName) {
+        try {
+            System.out.println(inFileName + "복사시작");
+
+            FileInputStream inputStream = new FileInputStream(inFileName);
+            FileOutputStream outputStream = new FileOutputStream(outFileName);
+
+            FileChannel fcin = inputStream.getChannel();
+            FileChannel fcout = outputStream.getChannel();
+
+            long size = fcin.size();
+            fcin.transferTo(0, size, fcout);
+
+            fcout.close();
+            fcin.close();
+
+            outputStream.close();
+            inputStream.close();
+
+            System.out.println(inFileName + "복사시작 완료");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    public void sendResult(String log_sn, String flag) {
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+        map.add("log_sn", log_sn);
+        map.add("flag",flag);
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForObject(VDRS_URL, map, String.class);
     }
 
 }

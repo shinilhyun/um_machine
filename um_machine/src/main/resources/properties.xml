@@ -16,6 +16,8 @@
     <!-- 저장될 로컬폴더 ex) C:/um/ftpTest; -->
     <entry key="SFTP_TARGET">/DATA1/um</entry>
     
+    <entry key="VDRS_URL">10.175.88.22/proxy/umResult.do</entry>
+    
     
     <!-- ==============SFTP 접속정보 설정 END============= -->
     
