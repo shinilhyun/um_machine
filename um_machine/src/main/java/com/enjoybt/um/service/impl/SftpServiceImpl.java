@@ -88,14 +88,14 @@ public class SftpServiceImpl implements SftpService {
                 //ftp에서 파일 다운로드
 
                 logger.info(fileName + " 다운로드 중...");
-                //check = downSFtp(remote, fileName, local);
+                check = downSFtp(remote, fileName, local);
 
                 if (check == true) {
 
                     logger.info(fileName + " 다운로드 완료된 파일 삭제중...");
-//                    if (deleteSFtp(remote, fileName)) {
-//                        logger.info(fileName + "삭제완료");
-//                    }
+                    if (deleteSFtp(remote, fileName)) {
+                        logger.info(fileName + "삭제완료");
+                    }
                 }
                 //TODO 다운로드 받은 path/temp 폴더의 파일 체크 후 화산 시스템으로 결과 날려주는 부분 필요
             }
