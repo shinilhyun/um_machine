@@ -88,7 +88,13 @@ public class SftpServiceImpl implements SftpService {
                 //ftp에서 파일 다운로드
 
                 logger.info(fileName + " 다운로드 중...");
-                check = downSFtp(remote, fileName, local);
+
+                try{
+                    check = downSFtp(remote, fileName, local);
+                } catch(Exception e) {
+                    logger.info("다운로드 실패(이미 다운받은 목록인듯)");
+                    check=false;
+                }
 
                 if (check == true) {
 
@@ -108,12 +114,7 @@ public class SftpServiceImpl implements SftpService {
                 sendResult(log_sn, "F");
             }
 
-        }
-//        catch (SftpException se) {
-//            logger.info("이미 SFTP 접속 끊김");
-//            return;
-//        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.info("um.do error!");
         } finally {
             disconnect();
