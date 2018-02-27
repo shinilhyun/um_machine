@@ -27,9 +27,9 @@
     <entry key="SFTP_PORT">22</entry>
     <entry key="SFTP_ID">vdrs</entry>
     <entry key="SFTP_PW">vdrs00</entry> 
-    <entry key="SFTP_TARGET">D:/sftpTest/um</entry>
-    <entry key="SFTP_TEMPFOLDER">D:/sftpTest/umTemp</entry>
-    <entry key="api_root">D:/sftpTest/um</entry>
+    <entry key="SFTP_TARGET">F:/test/sftpTest/um</entry>
+    <entry key="SFTP_TEMPFOLDER">F:/test/sftpTest/umTemp</entry>
+    <entry key="api_root">F:/test/sftpTest/um</entry>
     <entry key="remote_root">/</entry>
     <entry key="VDRS_URL">http://localhost:8080/proxy/umResult.do</entry>
     
