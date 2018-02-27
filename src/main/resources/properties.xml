@@ -2,28 +2,28 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd" >
 <properties>
     <!-- ==============운영 설정============= -->
-    <!--<entry key="SFTP_IP">10.28.64.28</entry>
+    <entry key="SFTP_IP">10.28.64.28</entry>
     <entry key="SFTP_PORT">1022</entry>
     <entry key="SFTP_ID">volcano</entry>
     <entry key="SFTP_PW">ndms2kma01!</entry>
     
     
-    &lt;!&ndash;저장될 로컬폴더 ex) C:/um/ftpTest;&ndash;&gt;
+    <!-- 저장될 로컬폴더 ex) C:/um/ftpTest;&ndash;&gt; -->
     <entry key="SFTP_TARGET">/DATA1/um</entry>
     <entry key="SFTP_TEMPFOLDER">/DATA1/umTemp</entry>
     
     <entry key="VDRS_URL">http://10.175.88.22/proxy/umResult.do</entry>
                 
-    &lt;!&ndash;SFTP 로컬 폴더와 동일하게 설정 &ndash;&gt;
+    <!-- SFTP 로컬 폴더와 동일하게 설정 --> 
     <entry key="api_root">/DATA1/um</entry>
     
-    &lt;!&ndash;원격 폴더구조(/에서 기상장파일까지경로)&ndash;&gt;
-    <entry key="remote_root">/home/volcano/kma2volcano</entry>-->
+    <!-- 원격 폴더구조(/에서 기상장파일까지경로)&ndash;&gt; -->
+    <entry key="remote_root">/home/volcano/kma2volcano</entry>
     
     <!-- ==============운영 설정end============= -->
     
        
-     <entry key="SFTP_IP">192.168.0.151</entry>
+     <!-- <entry key="SFTP_IP">192.168.0.151</entry>
     <entry key="SFTP_PORT">22</entry>
     <entry key="SFTP_ID">vdrs</entry>
     <entry key="SFTP_PW">vdrs00</entry> 
@@ -31,6 +31,6 @@
     <entry key="SFTP_TEMPFOLDER">F:/test/sftpTest/umTemp</entry>
     <entry key="api_root">F:/test/sftpTest/um</entry>
     <entry key="remote_root">/</entry>
-    <entry key="VDRS_URL">http://localhost:8080/proxy/umResult.do</entry>
+    <entry key="VDRS_URL">http://localhost:8080/proxy/umResult.do</entry> -->
     
 </properties>
