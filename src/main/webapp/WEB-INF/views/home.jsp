@@ -2,11 +2,11 @@
 <%@ page session="false" %>
 <html>
 <head>
-	<title>Home</title>
+	<title>um_machine</title>
 </head>
 <body>
 <h1>
-	Hello world!  
+	UM_MACHINE RUNNING....
 </h1>
 
 <P>  The time on the server is ${serverTime}. </P>
