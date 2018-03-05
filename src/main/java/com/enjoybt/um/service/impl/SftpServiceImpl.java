@@ -106,7 +106,10 @@ public class SftpServiceImpl implements SftpService {
                 //TODO 다운로드 받은 path/temp 폴더의 파일 체크 후 화산 시스템으로 결과 날려주는 부분 필요
             }
 
-            if (checkAndMove(fileList)) {
+            //tempFolder 파일 결과폴더로 이동
+            umFileMove();
+
+            if (checkSuccess(fileList)) {
                 logger.info("기상장파일 체크완료 : 결과 Y, log_sn : " + log_sn);
                 sendResult(log_sn, "Y");
             } else {
@@ -216,15 +219,17 @@ public class SftpServiceImpl implements SftpService {
         return sftpUtil.getList();
     }
 
-    public boolean checkAndMove(List<Element> fileList) {
+    public boolean umFileMove() {
         boolean result = true;
+        File ff = new File(TEMP_FOLDER);
+        File[] fileList = ff.listFiles();
 
         String targetFolder = null;
-        for (Element record : fileList) {
+        for (File record : fileList) {
 
             //r120_v070_erea_pres_h066.2017111000
 
-            String fileName = record.getValue();
+            String fileName = record.getName();
             String arr[] = fileName.split("_");
             String fileName2 = null;
 
@@ -249,10 +254,7 @@ public class SftpServiceImpl implements SftpService {
                     fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
                 } else {
                     logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
-
-                    if (!checkTargetFolder(LOCAL_FOLDER, f)) {
-                        result = false;
-                    }
+                    return false;
                 }
             }
 
@@ -299,25 +301,35 @@ public class SftpServiceImpl implements SftpService {
         String result = restTemplate.postForObject(VDRS_URL, map, String.class);
     }
 
-    public boolean checkTargetFolder(String path, File f) {
+    public boolean checkSuccess(List<Element> fileList){
+        boolean result = false;
+        String targetFolder;
+        for (Element e : fileList) {
+            String fileName = e.getValue();
+            targetFolder = LOCAL_FOLDER + "/r120." + fileName.substring(25, 33) + ".t" + fileName
+                            .substring(33, 35) + "z";
+
+            result = checkTargetFolder(targetFolder,fileName);
+
+            if(result == false){
+                return false;
+            }
+
+        }
+
+        return result;
+    }
+
+    public boolean checkTargetFolder(String path, String fileName) {
 
         File dirFile = new File(path);
         File[] fileList = dirFile.listFiles();
-        StringBuffer sb = new StringBuffer("");
-        boolean result = false;
+        boolean result= false;
 
         for (File tempFile : fileList) {
 
-            if (tempFile.isFile()) {
-
-                if (tempFile.getName().equals(f.getName())) {
-                    return true;
-                }
-            } else if (tempFile.isDirectory()) {
-                try{
-                    result = checkTargetFolder(tempFile.getCanonicalPath(), f);
-
-                } catch (Exception e) {}
+            if (tempFile.getName().equals(fileName)) {
+                return true;
             }
         }
         return result;
