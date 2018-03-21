@@ -193,5 +193,14 @@
                 </configuration>
             </plugin>
         </plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>*.xml</include>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
     </build>
 </project>
