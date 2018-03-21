@@ -6,6 +6,7 @@
 	       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<util:properties id="config" location="classpath:/properties.xml"/>
-	
+	<util:properties id="mode" location="classpath:/properties.xml"/>
+	<util:properties id="config" location="classpath:/properties/#{mode['mode']}_properties.xml"/>
+
 </beans>
