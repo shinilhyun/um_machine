@@ -43,7 +43,7 @@ public class SftpServiceImpl implements SftpService {
     @Value("#{config['SFTP_TARGET']}")
     private String LOCAL_FOLDER;
 
-    @Value("#{config['remote_root']}")
+    @Value("#{config['REMOTE_ROOT']}")
     private String REMOTE_ROOT;
 
     @Value("#{config['VDRS_URL']}")

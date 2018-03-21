@@ -7,6 +7,6 @@
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<util:properties id="mode" location="classpath:/properties.xml"/>
-	<util:properties id="config" location="classpath:/properties/#{mode['mode']}_properties.xml"/>
+	<util:properties id="config" location="classpath:/properties/#{mode['MODE']}_properties.xml"/>
 
 </beans>
