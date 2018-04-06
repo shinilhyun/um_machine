@@ -53,8 +53,22 @@ public class ApiController {
     @ResponseBody
     public String getUmFileList(@RequestParam(value = "nwp") String nwp,
             @RequestParam(value = "sub") String sub, @RequestParam(value = "tmfc") String tmfc,
-            HttpSession session) throws Exception {
-        
+            HttpSession session, HttpServletResponse response) throws Exception {
+
+	    try{
+
+            String folder = ROOT + "/" + nwp + "." + tmfc.substring(0, 8)+".t"+tmfc.substring(8)+"z";
+            File f = new File(folder);
+
+            if(!f.exists()){
+                response.sendError(404);
+            }
+
+        }catch (Exception e) {
+	        logger.info("폴더검색에러");
+            e.printStackTrace();
+        }
+
         StringBuffer sb = new StringBuffer("");
         sb.append(subDirList(ROOT, nwp, sub, tmfc));
       
@@ -88,13 +102,19 @@ public class ApiController {
 	    
         String fileName = nwp + "_v070_erea_" + sub + "_h" + hh_ef + "." + tmfc + ".gb2";
 	    File file = new File(folder+"/"+fileName);
-	    response.setHeader("Content-Disposition", "attachment;filename=" + file.getName() + ";");
-        response.setContentType("text/plain");
-     
-        FileInputStream fileIn = new FileInputStream(file); //파일 읽어오기
-        FileCopyUtils.copy(fileIn,response.getOutputStream());
-        
-        response.flushBuffer();
+
+	    if(file.exists()) {
+            response.setHeader("Content-Disposition",
+                    "attachment;filename=" + file.getName() + ";");
+            response.setContentType("text/plain");
+
+            FileInputStream fileIn = new FileInputStream(file); //파일 읽어오기
+            FileCopyUtils.copy(fileIn, response.getOutputStream());
+
+            response.flushBuffer();
+        } else {
+	        response.sendError(404);
+        }
 	}
     
     public String subDirList(String source,String nwp, String sub, String tmfc) throws IOException{
