@@ -16,9 +16,6 @@
     <!--SFTP 로컬 폴더와 동일하게 설정-->
     <entry key="API_ROOT">F:/test/sftpTest/um</entry>
 
-    <!--시뮬레이션을 위한 기상장 저장되어있는 경로-->
-    <entry key="SIMULATION.UM.ROOT">F:/test/sftpTest/simul_um</entry>
-
     <!--원격 폴더구조(/에서 기상장파일까지경로)-->
     <entry key="REMOTE_ROOT">/</entry>
     <entry key="VDRS_URL">http://localhost:8080/proxy/umResult.do</entry>

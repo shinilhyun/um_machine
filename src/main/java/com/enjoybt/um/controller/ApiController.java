@@ -106,16 +106,7 @@ public class ApiController {
 
         //ex) tmfc = 2017083100
 
-        String folder;
-
-        //시뮬레이션을 위한 UM 요청이면 경로 다르게
-        int chekYear = Integer.parseInt(tmfc.substring(0,4));
-
-        if(chekYear < 2018){
-            folder = SIMUL_UM_PATH + "/" + nwp + "." + tmfc.substring(0, 8)+".t"+tmfc.substring(8)+"z";
-        } else {
-            folder = ROOT + "/" + nwp + "." + tmfc.substring(0, 8)+".t"+tmfc.substring(8)+"z";
-        }
+        String folder = folder = ROOT + "/" + nwp + "." + tmfc.substring(0, 8)+".t"+tmfc.substring(8)+"z";
 
         String fileName = nwp + "_v070_erea_" + sub + "_h" + hh_ef + "." + tmfc + ".gb2";
 	    File file = new File(folder+"/"+fileName);
