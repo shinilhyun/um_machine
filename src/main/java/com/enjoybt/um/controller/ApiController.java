@@ -67,6 +67,7 @@ public class ApiController {
             }
 
         }catch (Exception e) {
+            response.sendError(404);
 	        logger.info("폴더검색에러");
             e.printStackTrace();
         }

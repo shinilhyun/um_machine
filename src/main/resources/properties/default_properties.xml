@@ -23,6 +23,6 @@
     <entry key="REMOTE_ROOT">/</entry>
     <entry key="VDRS_URL">http://localhost:8080/proxy/umResult.do</entry>
 
-    <entry key="MODE">real_op</entry>
+    <entry key="MODE">default</entry>
 
 </properties>
