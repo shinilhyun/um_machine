@@ -15,6 +15,7 @@ import javax.sound.midi.MidiDevice.Info;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ErrorCoded;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -70,6 +71,8 @@ public class ApiController {
             response.sendError(404);
 	        logger.info("폴더검색에러");
             e.printStackTrace();
+
+            return "404";
         }
 
         StringBuffer sb = new StringBuffer("");
