@@ -254,7 +254,7 @@ public class SftpServiceImpl implements SftpService {
                     fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
                 } else {
                     logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
-                    return false;
+                    result =  false;
                 }
             }
 
