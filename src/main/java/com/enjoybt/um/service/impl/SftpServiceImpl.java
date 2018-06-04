@@ -129,7 +129,8 @@ public class SftpServiceImpl implements SftpService {
     public void downWorking() {
 
         if (sftpUtil.channelSftp != null) {
-            System.out.println("channelSftp  이미 존재");
+            logger.info("channelSftp  이미 존재");
+            logger.info("진행중인 다운로드 작업이 있으므로 dwonWroking을 실행하지 않습니다");
             return;
         }
 
