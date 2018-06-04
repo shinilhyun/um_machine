@@ -17,4 +17,6 @@ public interface SftpService {
 	public boolean deleteSFtp(String remote,String removeFileName) throws Exception;
 	
 	public List<String> getList();
+
+	public boolean umFileMove();
 }
