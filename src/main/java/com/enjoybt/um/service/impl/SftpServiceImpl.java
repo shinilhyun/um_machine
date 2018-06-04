@@ -146,15 +146,19 @@ public class SftpServiceImpl implements SftpService {
 
                 String fileName = file;
 
+
                 //경로 수정 필요
                 String remote = REMOTE_ROOT;
-                String local = LOCAL_FOLDER;
+                String local = TEMP_FOLDER;
+
                 boolean check = false;
 
-                //ftp에서 파일 다운로드
-
-                logger.info(fileName + " 다운로드 중...");
-                check = downSFtp(remote, fileName, local);
+                try {
+                    check = downSFtp(remote, fileName, local);
+                } catch (Exception e) {
+                    logger.info("다운로드 실패(이미 다운받은 목록인듯)");
+                    check = false;
+                }
 
                 if (check == true) {
 
@@ -164,6 +168,8 @@ public class SftpServiceImpl implements SftpService {
                     }
                 }
             }
+
+            umFileMove();
 
 //          sftpService.disconnect();
 //          logger.info("sftp 연결 종료");
