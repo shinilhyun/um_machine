@@ -102,9 +102,13 @@ public class SFTPController {
 
 	@RequestMapping(value = "/move.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
-	public void move() throws IOException {
+	public String move() throws IOException {
 	    logger.info("move.do");
 
-	    sftpService.umFileMove();
+	    if(sftpService.umFileMove()){
+	    	return "true";
+		} else {
+	    	return "false";
+		}
 	}
 }

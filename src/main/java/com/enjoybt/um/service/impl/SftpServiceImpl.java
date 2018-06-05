@@ -241,29 +241,36 @@ public class SftpServiceImpl implements SftpService {
             String arr[] = fileName.split("_");
             String fileName2 = null;
 
-            if (arr[3].equals("pres")) {
-                fileName2 = arr[0] + "_" + arr[1] + "_" + arr[2] + "_unis_" + arr[4];
-                File f = new File(TEMP_FOLDER + "/" + fileName2);
+            try {
 
-                if (f.exists()) {
-                    logger.info(arr[4] + "파일 검증 완료 파일이동 시작");
-                    // 파일 1, 2 모두 경로 이동
-                    targetFolder =
-                            LOCAL_FOLDER + "/r120." + fileName.substring(25, 33) + ".t" + fileName
-                                    .substring(33, 35) + "z";
+                if (arr[3].equals("pres")) {
+                    fileName2 = arr[0] + "_" + arr[1] + "_" + arr[2] + "_unis_" + arr[4];
+                    File f = new File(TEMP_FOLDER + "/" + fileName2);
 
-                    File tf = new File(targetFolder);
+                    if (f.exists()) {
+                        logger.info(arr[4] + "파일 검증 완료 파일이동 시작");
+                        // 파일 1, 2 모두 경로 이동
+                        targetFolder =
+                                LOCAL_FOLDER + "/r120." + fileName.substring(25, 33) + ".t"
+                                        + fileName
+                                        .substring(33, 35) + "z";
 
-                    if (!tf.exists()) {
-                        tf.mkdirs();
+                        File tf = new File(targetFolder);
+
+                        if (!tf.exists()) {
+                            tf.mkdirs();
+                        }
+
+                        fileCopy(TEMP_FOLDER + "/" + fileName, targetFolder + "/" + fileName);
+                        fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
+                    } else {
+                        logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
+                        result = false;
                     }
-
-                    fileCopy(TEMP_FOLDER + "/" + fileName, targetFolder + "/" + fileName);
-                    fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
-                } else {
-                    logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
-                    result =  false;
                 }
+            } catch (Exception e) {
+                logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
+                result = false;
             }
 
         }
