@@ -3,6 +3,12 @@
 <properties>
     <comment>운영(real_op)</comment>
 
+    <!--DB-->
+    <entry key="JDBC.POSTGRESQL.DRIVER">org.postgresql.Driver</entry>
+    <entry key="JDBC.POSTGRESQL.URL">jdbc:postgresql://10.175.84.27:5432/vdrs</entry>
+    <entry key="JDBC.POSTGRESQL.USERNAME">postgres</entry>
+    <entry key="JDBC.POSTGRESQL.PASSWORD">postgres123#</entry>
+
     <entry key="SFTP_IP">10.28.64.28</entry>
     <entry key="SFTP_PORT">1022</entry>
     <entry key="SFTP_ID">volcano</entry>

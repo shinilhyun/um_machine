@@ -9,4 +9,7 @@
 	<util:properties id="mode" location="classpath:/properties.xml"/>
 	<util:properties id="config" location="classpath:/properties/#{mode['MODE']}_properties.xml"/>
 
+	<import resource="datasource.xml"/>
+	<import resource="mybatis.xml"/>
+
 </beans>

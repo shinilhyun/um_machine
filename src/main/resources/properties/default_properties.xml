@@ -3,6 +3,12 @@
 <properties>
     <comment>개발(default)</comment>
 
+    <!--DB-->
+    <entry key="JDBC.POSTGRESQL.DRIVER">org.postgresql.Driver</entry>
+    <entry key="JDBC.POSTGRESQL.URL">jdbc:postgresql://192.168.0.151:5432/vdrs2</entry>
+    <entry key="JDBC.POSTGRESQL.USERNAME">vdrs</entry>
+    <entry key="JDBC.POSTGRESQL.PASSWORD">vdrs00</entry>
+
     <entry key="SFTP_IP">192.168.0.151</entry>
     <entry key="SFTP_PORT">22</entry>
     <entry key="SFTP_ID">vdrs</entry>
