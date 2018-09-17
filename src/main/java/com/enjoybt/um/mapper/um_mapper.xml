@@ -2,9 +2,50 @@
 <!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd"> 
 
 <mapper namespace="um">
-	<select id="test" resultType="java.lang.String">
-		select CODE
-        from TB_AIRLINE
-        limit 1;
-	</select>
+
+    <insert id="insertStartLog" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="log_sn">
+		INSERT INTO TB_UM_DOWN_LOG
+            (LOG_SN, CONTENT)
+        VALUES
+            (DEFAULT, #{xmlData})
+	</insert>
+
+    <update id="updateTempTime" parameterType="java.lang.Integer">
+        UPDATE TB_UM_DOWN_LOG
+        SET TEMP_TIME = now()
+        WHERE LOG_SN = #{logSn}
+    </update>
+
+    <update id="updateEndLog" parameterType="java.util.Map">
+        UPDATE TB_UM_DOWN_LOG
+        SET
+            END_TIME = now(),
+            SUCCESS_FLAG = #{flag}
+        WHERE
+            LOG_SN = #{log_sn}
+    </update>
+
+    <insert id="insertFileStartLog" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="file_no">
+        INSERT INTO TB_UM_DOWN_FILE_LOG
+            (FILE_NO, log_sn, file_name)
+        VALUES
+            (DEFAULT, #{log_sn}, #{file_name})
+    </insert>
+
+    <update id="updateFileTempLog" parameterType="java.lang.Integer">
+        UPDATE TB_UM_DOWN_FILE_LOG
+        SET
+            TEMP_TIME = now()
+        WHERE
+            FILE_NO = #{file_no}
+    </update>
+
+    <update id="updateFileEndLog" parameterType="java.util.Map">
+        UPDATE TB_UM_DOWN_FILE_LOG
+        SET
+            END_TIME = now(),
+            SUCCESS_FLAG = #{flag}
+        WHERE
+            FILE_NAME = #{file_name}
+    </update>
 </mapper>

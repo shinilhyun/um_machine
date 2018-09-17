@@ -1,32 +1,34 @@
 package com.enjoybt.um.service.impl;
 
+import com.enjoybt.common.dao.CommonDAO;
+import com.enjoybt.um.service.SftpService;
+import com.enjoybt.util.SFTPUtil;
+import com.jcraft.jsch.SftpException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
-import com.enjoybt.um.service.SftpService;
-import com.enjoybt.util.SFTPUtil;
-import com.jcraft.jsch.SftpException;
 
 @Service
 public class SftpServiceImpl implements SftpService {
 
     private static final Logger logger = LoggerFactory.getLogger(SftpServiceImpl.class);
+
+    @Autowired
+    CommonDAO dao;
 
     @Value("#{config['SFTP_IP']}")
     private String SFTP_IP;
@@ -55,7 +57,9 @@ public class SftpServiceImpl implements SftpService {
     private SFTPUtil sftpUtil = SFTPUtil.getInstance();
 
     @Override
-    public synchronized void run(String xmlData, String log_sn) {
+    public synchronized void run(String xmlData) {
+        int file_no = 0;
+        String log_sn = insertDownStartLog(xmlData);
 
         if (sftpUtil.channelSftp != null) {
             System.out.println("channelSftp  이미 존재");
@@ -88,6 +92,7 @@ public class SftpServiceImpl implements SftpService {
                 //ftp에서 파일 다운로드
 
                 logger.info(fileName + " 다운로드 중...");
+                file_no = insertFileStartLog(log_sn, fileName);
 
                 try {
                     check = downSFtp(remote, fileName, local);
@@ -102,19 +107,25 @@ public class SftpServiceImpl implements SftpService {
                     if (deleteSFtp(remote, fileName)) {
                         logger.info(fileName + "삭제완료");
                     }
+                } else {
+
                 }
-                //TODO 다운로드 받은 path/temp 폴더의 파일 체크 후 화산 시스템으로 결과 날려주는 부분 필요
+                //개별 파일 temp폴더에 저장완료 시간
+                updateFileTempLog(file_no);
             }
+
+            //temp폴더에 저장완료 시간 update
+            updateTempTime(log_sn);
 
             //tempFolder 파일 결과폴더로 이동
             umFileMove();
 
             if (checkSuccess(fileList)) {
                 logger.info("기상장파일 체크완료 : 결과 Y, log_sn : " + log_sn);
-                sendResult(log_sn, "Y");
+                updateEndLog(log_sn, "Y");
             } else {
                 logger.info("기상장파일 체크완료 : 결과 F, log_sn : " + log_sn);
-                sendResult(log_sn, "F");
+                updateEndLog(log_sn, "F");
             }
 
         } catch (Exception e) {
@@ -262,7 +273,9 @@ public class SftpServiceImpl implements SftpService {
                         }
 
                         fileCopy(TEMP_FOLDER + "/" + fileName, targetFolder + "/" + fileName);
+                        updateFileEndLog(fileName, "Y");
                         fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
+                        updateFileEndLog(fileName2, "Y");
                     } else {
                         logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
                         result = false;
@@ -307,15 +320,6 @@ public class SftpServiceImpl implements SftpService {
         }
     }
 
-    public void sendResult(String log_sn, String flag) {
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-        map.add("log_sn", log_sn);
-        map.add("flag", flag);
-
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.postForObject(VDRS_URL, map, String.class);
-    }
-
     public boolean checkSuccess(List<Element> fileList){
         boolean result = false;
         String targetFolder;
@@ -350,4 +354,82 @@ public class SftpServiceImpl implements SftpService {
         return result;
     }
 
+    //다운로드 시작 로그 기록
+    public String insertDownStartLog(String xmlData){
+        String log_sn = null;
+        Map<String, Object> params = new HashMap<String, Object>();
+        try {
+            params.put("xmlData", xmlData);
+            dao.insert("um.insertStartLog",params);
+            log_sn = (String)params.get("log_sn");
+        } catch (Exception e) {
+            logger.info("ERROR", e);
+        }
+
+        return log_sn;
+    }
+
+    public void updateTempTime(String log_sn) {
+
+        int logSn = Integer.parseInt(log_sn);
+
+        try {
+            dao.update("um.updateTempTime",logSn);
+        } catch (Exception e) {
+            logger.info("ERROR", e);
+        }
+    }
+
+    public void updateEndLog(String log_sn, String flag) {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        int logSn = Integer.parseInt(log_sn);
+
+        try {
+            params.put("log_sn", logSn);
+            params.put("flag", flag);
+
+            dao.update("um.updateEndLog",params);
+        } catch (Exception e) {
+            logger.info("ERROR", e);
+        }
+    }
+
+    public int insertFileStartLog(String log_sn, String fileNo){
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        int logSn = Integer.parseInt(log_sn);
+        String file_id = null;
+
+        try {
+            params.put("log_sn", logSn);
+            params.put("file_no", fileNo);
+
+            dao.insert("um.insertFileStartLog",params);
+            file_id = (String)params.get("file_no");
+        } catch (Exception e) {
+            logger.info("ERROR", e);
+        }
+        return Integer.parseInt(file_id);
+    }
+
+    public void updateFileTempLog(int file_no){
+        try {
+            dao.update("um.updateFileTempLog",file_no);
+        } catch (Exception e) {
+            logger.info("ERROR", e);
+        }
+    }
+
+    public void updateFileEndLog(String fileName, String flag) {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("file_name", fileName);
+        params.put("flag", flag);
+        try {
+            dao.update("um.updateFileEndLog",params);
+        } catch (Exception e) {
+            logger.info("ERROR", e);
+        }
+    }
 }

@@ -80,8 +80,7 @@ public class SFTPController {
 	    logger.info("PW : " + PW);
 
 		String xmlData = map.getFirst("xmlData");
-		String log_sn = map.getFirst("log_sn");
-	    sftpService.run(xmlData, log_sn);
+	    sftpService.run(xmlData);
        
 	    return "success";
 	}
