@@ -57,6 +57,9 @@ public class SftpServiceImpl implements SftpService {
     @Value("#{config['CMD.MODE']}")
     private String cmdMode;
 
+    @Value("#{config['CMD.MOVE']}")
+    private String moveCommand;
+
     private SFTPUtil sftpUtil = SFTPUtil.getInstance();
 
     @Override
@@ -302,7 +305,7 @@ public class SftpServiceImpl implements SftpService {
         Process pc = null;
         Runtime rt = Runtime.getRuntime();
 
-        String command = "mv " + inFileName + " " + outFileName;
+        String command = moveCommand + " " + inFileName + " " + outFileName;
         String cmdArry[] = {cmdMode, command};
 
         try {

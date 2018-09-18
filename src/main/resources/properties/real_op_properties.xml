@@ -29,5 +29,6 @@
     <entry key="REMOTE_ROOT">/data/volcano/kma2volcano</entry>
 
     <entry key="CMD.MODE">sh</entry>
+    <entry key="CMD.MOVE">mv</entry>
 
 </properties>
