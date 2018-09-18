@@ -54,6 +54,9 @@ public class SftpServiceImpl implements SftpService {
     @Value("#{config['SFTP_TEMPFOLDER']}")
     private String TEMP_FOLDER;
 
+    @Value("#{config['CMD.MODE']}")
+    private String cmdMode;
+
     private SFTPUtil sftpUtil = SFTPUtil.getInstance();
 
     @Override
@@ -294,32 +297,26 @@ public class SftpServiceImpl implements SftpService {
     }
 
     public void fileCopy(String inFileName, String outFileName) {
+
+        System.out.println(inFileName + "복사시작");
+        Process pc = null;
+        Runtime rt = Runtime.getRuntime();
+
+        String command = "mv " + inFileName + " " + outFileName;
+        String cmdArry[] = {cmdMode, command};
+
         try {
-            System.out.println(inFileName + "복사시작");
 
-            FileInputStream inputStream = new FileInputStream(inFileName);
-            FileOutputStream outputStream = new FileOutputStream(outFileName);
+            logger.info("command = " + command);
+            pc = rt.exec(cmdArry);
+            pc.waitFor();
 
-            FileChannel fcin = inputStream.getChannel();
-            FileChannel fcout = outputStream.getChannel();
-
-            long size = fcin.size();
-            fcin.transferTo(0, size, fcout);
-
-            fcout.close();
-            fcin.close();
-
-            outputStream.close();
-            inputStream.close();
-
-            System.out.println(inFileName + "복사 완료");
-
-            //복사후 파일 삭제
-            File f = new File(inFileName);
-            f.delete();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.info("ERROR", e);
+        } finally {
+            if (pc != null) {
+                pc.destroy();
+            }
         }
     }
 

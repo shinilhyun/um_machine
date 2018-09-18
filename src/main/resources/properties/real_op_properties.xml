@@ -28,4 +28,6 @@
     <!--원격 폴더구조(/에서 기상장파일까지경로)-->
     <entry key="REMOTE_ROOT">/data/volcano/kma2volcano</entry>
 
+    <entry key="CMD.MODE">sh</entry>
+
 </properties>

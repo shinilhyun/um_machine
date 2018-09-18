@@ -22,4 +22,6 @@
 
     <entry key="MODE">dev</entry>
 
+    <entry key="CMD.MODE">sh</entry>
+
 </properties>

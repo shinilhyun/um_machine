@@ -15,9 +15,9 @@
     <entry key="SFTP_PW">vdrs00</entry>
 
     <!--저장될 로컬폴더 ex) C:/um/ftpTest-->
-    <entry key="SFTP_TARGET">F:/test/sftpTest/um</entry>
+    <entry key="SFTP_TARGET">/DATA1/um</entry>
 
-    <entry key="SFTP_TEMPFOLDER">F:/test/sftpTest/umTemp</entry>
+    <entry key="SFTP_TEMPFOLDER">/DATA1/umTemp</entry>
 
     <!--SFTP 로컬 폴더와 동일하게 설정-->
     <entry key="API_ROOT">F:/test/sftpTest/um</entry>
@@ -27,5 +27,7 @@
     <entry key="VDRS_URL">http://localhost:8080/proxy/umResult.do</entry>
 
     <entry key="MODE">default</entry>
+
+    <entry key="CMD.MODE">sh</entry>
 
 </properties>
