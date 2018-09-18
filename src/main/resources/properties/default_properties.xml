@@ -9,8 +9,8 @@
     <entry key="JDBC.POSTGRESQL.USERNAME">vdrs</entry>
     <entry key="JDBC.POSTGRESQL.PASSWORD">vdrs00</entry>
 
-    <entry key="SFTP_IP">192.168.0.151</entry>
-    <entry key="SFTP_PORT">22</entry>
+    <entry key="SFTP_IP">192.168.0.27</entry>
+    <entry key="SFTP_PORT">23</entry>
     <entry key="SFTP_ID">vdrs</entry>
     <entry key="SFTP_PW">vdrs00</entry>
 
@@ -23,7 +23,7 @@
     <entry key="API_ROOT">F:/test/sftpTest/um</entry>
 
     <!--원격 폴더구조(/에서 기상장파일까지경로)-->
-    <entry key="REMOTE_ROOT">/</entry>
+    <entry key="REMOTE_ROOT">/remote/</entry>
     <entry key="VDRS_URL">http://localhost:8080/proxy/umResult.do</entry>
 
     <entry key="MODE">default</entry>

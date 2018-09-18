@@ -59,7 +59,7 @@ public class SftpServiceImpl implements SftpService {
     @Override
     public synchronized void run(String xmlData) {
         int file_no = 0;
-        String log_sn = insertDownStartLog(xmlData);
+        int log_sn = insertDownStartLog(xmlData);
 
         if (sftpUtil.channelSftp != null) {
             System.out.println("channelSftp  이미 존재");
@@ -107,11 +107,14 @@ public class SftpServiceImpl implements SftpService {
                     if (deleteSFtp(remote, fileName)) {
                         logger.info(fileName + "삭제완료");
                     }
+
+                    //개별 파일 temp폴더에 저장완료 시간
+                    updateFileTempLog(file_no);
+
                 } else {
 
                 }
-                //개별 파일 temp폴더에 저장완료 시간
-                updateFileTempLog(file_no);
+
             }
 
             //temp폴더에 저장완료 시간 update
@@ -124,8 +127,8 @@ public class SftpServiceImpl implements SftpService {
                 logger.info("기상장파일 체크완료 : 결과 Y, log_sn : " + log_sn);
                 updateEndLog(log_sn, "Y");
             } else {
-                logger.info("기상장파일 체크완료 : 결과 F, log_sn : " + log_sn);
-                updateEndLog(log_sn, "F");
+                logger.info("기상장파일 체크완료 : 결과 N, log_sn : " + log_sn);
+                updateEndLog(log_sn, "N");
             }
 
         } catch (Exception e) {
@@ -355,13 +358,13 @@ public class SftpServiceImpl implements SftpService {
     }
 
     //다운로드 시작 로그 기록
-    public String insertDownStartLog(String xmlData){
-        String log_sn = null;
+    public int insertDownStartLog(String xmlData){
+        int log_sn = 0;
         Map<String, Object> params = new HashMap<String, Object>();
         try {
             params.put("xmlData", xmlData);
             dao.insert("um.insertStartLog",params);
-            log_sn = (String)params.get("log_sn");
+            log_sn = Integer.parseInt(params.get("log_sn").toString());
         } catch (Exception e) {
             logger.info("ERROR", e);
         }
@@ -369,24 +372,21 @@ public class SftpServiceImpl implements SftpService {
         return log_sn;
     }
 
-    public void updateTempTime(String log_sn) {
-
-        int logSn = Integer.parseInt(log_sn);
+    public void updateTempTime(int log_sn) {
 
         try {
-            dao.update("um.updateTempTime",logSn);
+            dao.update("um.updateTempTime",log_sn);
         } catch (Exception e) {
             logger.info("ERROR", e);
         }
     }
 
-    public void updateEndLog(String log_sn, String flag) {
+    public void updateEndLog(int log_sn, String flag) {
 
         Map<String, Object> params = new HashMap<String, Object>();
-        int logSn = Integer.parseInt(log_sn);
 
         try {
-            params.put("log_sn", logSn);
+            params.put("log_sn", log_sn);
             params.put("flag", flag);
 
             dao.update("um.updateEndLog",params);
@@ -395,22 +395,21 @@ public class SftpServiceImpl implements SftpService {
         }
     }
 
-    public int insertFileStartLog(String log_sn, String fileNo){
+    public int insertFileStartLog(int log_sn, String fileName){
 
         Map<String, Object> params = new HashMap<String, Object>();
-        int logSn = Integer.parseInt(log_sn);
-        String file_id = null;
+        int file_no = 0;
 
         try {
-            params.put("log_sn", logSn);
-            params.put("file_no", fileNo);
+            params.put("log_sn", log_sn);
+            params.put("file_name", fileName);
 
             dao.insert("um.insertFileStartLog",params);
-            file_id = (String)params.get("file_no");
+            file_no = Integer.parseInt(params.get("file_no").toString());
         } catch (Exception e) {
             logger.info("ERROR", e);
         }
-        return Integer.parseInt(file_id);
+        return file_no;
     }
 
     public void updateFileTempLog(int file_no){
