@@ -103,6 +103,7 @@ public class SftpServiceImpl implements SftpService {
                     check = downSFtp(remote, fileName, local);
                 } catch (Exception e) {
                     logger.info("download fail(maybe already download file..)");
+                    updateFileComment(fileName,"sftp download fail.. (maybe already downloaded file)");
                     check = false;
                 }
 
@@ -181,6 +182,7 @@ public class SftpServiceImpl implements SftpService {
                     check = downSFtp(remote, fileName, local);
                 } catch (Exception e) {
                     logger.info("download fail(maybe already downloaded)");
+                    updateFileComment(fileName,"sftp download fail.. (maybe already downloaded file)");
                     check = false;
                 }
 
@@ -305,13 +307,17 @@ public class SftpServiceImpl implements SftpService {
                         updateFileEndLog(fileName2, "Y");
                     } else {
                         logger.info(fileName2 + "file not exist.. so don't move file");
+                        updateFileComment(fileName,"File pairs do not match");
+                        updateFileComment(fileName2,"File pairs do not match");
                         result = false;
                     }
                 }
             } catch (InterruptedException ie) {
                 logger.info(fileName2 + "file move fail!!", ie);
+                updateFileComment(fileName2,"file Move fail : " + ie);
             } catch (Exception e) {
                 logger.info(fileName2 + "file not exist.. so don't move file");
+                updateFileComment(fileName2,"file Move fail : " + e);
                 result = false;
             }
 
@@ -476,6 +482,18 @@ public class SftpServiceImpl implements SftpService {
         params.put("flag", flag);
         try {
             dao.update("um.updateFileEndLog",params);
+        } catch (Exception e) {
+            logger.info("ERROR", e);
+        }
+    }
+
+    public void updateFileComment(String fileName, String comment) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("comment", comment);
+        params.put("file_name", fileName);
+
+        try {
+            dao.update("um.updateFileComment", params);
         } catch (Exception e) {
             logger.info("ERROR", e);
         }

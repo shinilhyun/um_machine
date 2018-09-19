@@ -48,4 +48,11 @@
         WHERE
             FILE_NAME = #{file_name}
     </update>
+
+    <update id="updateFileComment" parameterType="java.util.Map">
+        UPDATE TB_UM_DOWN_FILE_LOG
+        SET COMMENT = #{comment}
+        WHERE
+            FILE_NAME = #{file_name}
+    </update>
 </mapper>
