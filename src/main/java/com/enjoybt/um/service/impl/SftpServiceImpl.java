@@ -68,7 +68,7 @@ public class SftpServiceImpl implements SftpService {
         int log_sn = insertDownStartLog(xmlData);
 
         if (sftpUtil.channelSftp != null) {
-            System.out.println("channelSftp  이미 존재");
+            System.out.println("channelSftp  already exist");
             return;
         }
 
@@ -97,21 +97,21 @@ public class SftpServiceImpl implements SftpService {
 
                 //ftp에서 파일 다운로드
 
-                logger.info(fileName + " 다운로드 중...");
+                logger.info(fileName + " downloading...");
                 file_no = insertFileStartLog(log_sn, fileName);
 
                 try {
                     check = downSFtp(remote, fileName, local);
                 } catch (Exception e) {
-                    logger.info("다운로드 실패(이미 다운받은 목록인듯)");
+                    logger.info("download fail(maybe already download file..)");
                     check = false;
                 }
 
                 if (check == true) {
 
-                    logger.info(fileName + " 다운로드 완료된 파일 삭제중...");
+                    logger.info(fileName + " download complete file deleting...");
                     if (deleteSFtp(remote, fileName)) {
-                        logger.info(fileName + "삭제완료");
+                        logger.info(fileName + "delete success");
                     }
 
                     //개별 파일 temp폴더에 저장완료 시간
@@ -130,10 +130,10 @@ public class SftpServiceImpl implements SftpService {
             umFileMove();
 
             if (checkSuccess(fileList)) {
-                logger.info("기상장파일 체크완료 : 결과 Y, log_sn : " + log_sn);
+                logger.info("file check finish : result Y, log_sn : " + log_sn);
                 updateEndLog(log_sn, "Y");
             } else {
-                logger.info("기상장파일 체크완료 : 결과 N, log_sn : " + log_sn);
+                logger.info("file check finish : result N, log_sn : " + log_sn);
                 updateEndLog(log_sn, "N");
             }
 
@@ -149,8 +149,8 @@ public class SftpServiceImpl implements SftpService {
     public void downWorking() {
 
         if (sftpUtil.channelSftp != null) {
-            logger.info("channelSftp  이미 존재");
-            logger.info("진행중인 다운로드 작업이 있으므로 dwonWroking을 실행하지 않습니다");
+            logger.info("channelSftp  already exist");
+            logger.info("do not excute dwonWroking");
             return;
         }
 
@@ -177,15 +177,15 @@ public class SftpServiceImpl implements SftpService {
                 try {
                     check = downSFtp(remote, fileName, local);
                 } catch (Exception e) {
-                    logger.info("다운로드 실패(이미 다운받은 목록인듯)");
+                    logger.info("download fail(maybe already downloaded)");
                     check = false;
                 }
 
                 if (check == true) {
 
-                    logger.info(fileName + " 다운로드 완료된 파일 삭제중...");
+                    logger.info(fileName + " complete file deleting...");
                     if (deleteSFtp(remote, fileName)) {
-                        logger.info(fileName + "삭제완료");
+                        logger.info(fileName + "delete finish");
                     }
                 }
             }
@@ -195,7 +195,7 @@ public class SftpServiceImpl implements SftpService {
 //          sftpService.disconnect();
 //          logger.info("sftp 연결 종료");
         } catch (SftpException se) {
-            logger.info("이미 sftp 연결이 끊김");
+            logger.info("already sftp disconnected");
             return;
         } catch (Exception e) {
             logger.info("downWorking error");
@@ -238,7 +238,7 @@ public class SftpServiceImpl implements SftpService {
     @Override
     public void disconnect() {
         // TODO Auto-generated method stub
-        logger.info("원격스토리지 접속 종료");
+        logger.info("remote storage disconnected");
         sftpUtil.disconnection();
     }
 
@@ -268,7 +268,7 @@ public class SftpServiceImpl implements SftpService {
                     File f = new File(TEMP_FOLDER + "/" + fileName2);
 
                     if (f.exists()) {
-                        logger.info(arr[4] + "파일 검증 완료 파일이동 시작");
+                        logger.info(arr[4] + "file check finished, file move start!");
                         // 파일 1, 2 모두 경로 이동
                         targetFolder =
                                 LOCAL_FOLDER + "/r120." + fileName.substring(25, 33) + ".t"
@@ -286,12 +286,12 @@ public class SftpServiceImpl implements SftpService {
                         fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
                         updateFileEndLog(fileName2, "Y");
                     } else {
-                        logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
+                        logger.info(fileName2 + "file not exist.. so don't move file");
                         result = false;
                     }
                 }
             } catch (Exception e) {
-                logger.info(fileName2 + "파일이 존재하지 않으므로 파일 이동을 하지 않습니다.");
+                logger.info(fileName2 + "file not exist.. so don't move file");
                 result = false;
             }
 
@@ -301,7 +301,7 @@ public class SftpServiceImpl implements SftpService {
 
     public void fileCopy(String inFileName, String outFileName) {
 
-        System.out.println(inFileName + "복사시작");
+        System.out.println(inFileName + "copy start");
         Process pc = null;
         Runtime rt = Runtime.getRuntime();
 
