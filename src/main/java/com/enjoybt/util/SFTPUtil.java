@@ -186,7 +186,7 @@ public class SFTPUtil{
             }
         }
         
-        System.out.println(downloadFileName+"다운로드 완료");
+        System.out.println(downloadFileName+" download complete");
         return true;
     }
     

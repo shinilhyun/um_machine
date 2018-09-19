@@ -28,7 +28,6 @@
 
     <entry key="MODE">default</entry>
 
-    <entry key="CMD.MODE">cmd</entry>
     <entry key="CMD.MOVE">move</entry>
 
 </properties>

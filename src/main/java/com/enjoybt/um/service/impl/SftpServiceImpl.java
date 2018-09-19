@@ -4,10 +4,12 @@ import com.enjoybt.common.dao.CommonDAO;
 import com.enjoybt.um.service.SftpService;
 import com.enjoybt.util.SFTPUtil;
 import com.jcraft.jsch.SftpException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
@@ -53,9 +55,6 @@ public class SftpServiceImpl implements SftpService {
 
     @Value("#{config['SFTP_TEMPFOLDER']}")
     private String TEMP_FOLDER;
-
-    @Value("#{config['CMD.MODE']}")
-    private String cmdMode;
 
     @Value("#{config['CMD.MOVE']}")
     private String moveCommand;
@@ -304,22 +303,32 @@ public class SftpServiceImpl implements SftpService {
 
     public void fileCopy(String inFileName, String outFileName) throws InterruptedException {
 
-        System.out.println(inFileName + "copy start");
+        System.out.println(inFileName + " move start");
         Process pc = null;
         Runtime rt = Runtime.getRuntime();
+        BufferedReader ebr = null;
+        String pcErrorLog;
 
         String command = moveCommand + " " + inFileName + " " + outFileName;
-        String cmdArry[] = {cmdMode, command};
 
         try {
 
             logger.info("command = " + command);
-            pc = rt.exec(cmdArry);
+            pc = rt.exec(command);
+
+            ebr = new BufferedReader(new InputStreamReader(pc.getErrorStream()));
+
+            while(true) {
+                pcErrorLog = ebr.readLine();
+                if (pcErrorLog == null) break;
+                logger.info(pcErrorLog);
+            }
+            pc.waitFor();
 
         } catch (Exception e) {
             logger.info("ERROR", e);
         } finally {
-            pc.waitFor();
+
 
             if (pc != null) {
                 pc.destroy();
