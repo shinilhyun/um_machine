@@ -281,6 +281,7 @@ public class SftpServiceImpl implements SftpService {
                             tf.mkdirs();
                         }
 
+
                         fileCopy(TEMP_FOLDER + "/" + fileName, targetFolder + "/" + fileName);
                         updateFileEndLog(fileName, "Y");
                         fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
@@ -290,6 +291,8 @@ public class SftpServiceImpl implements SftpService {
                         result = false;
                     }
                 }
+            } catch (InterruptedException ie) {
+                logger.info(fileName2 + "file move fail!!", ie);
             } catch (Exception e) {
                 logger.info(fileName2 + "file not exist.. so don't move file");
                 result = false;
@@ -299,7 +302,7 @@ public class SftpServiceImpl implements SftpService {
         return result;
     }
 
-    public void fileCopy(String inFileName, String outFileName) {
+    public void fileCopy(String inFileName, String outFileName) throws InterruptedException {
 
         System.out.println(inFileName + "copy start");
         Process pc = null;
@@ -312,11 +315,12 @@ public class SftpServiceImpl implements SftpService {
 
             logger.info("command = " + command);
             pc = rt.exec(cmdArry);
-            pc.waitFor();
 
         } catch (Exception e) {
             logger.info("ERROR", e);
         } finally {
+            pc.waitFor();
+
             if (pc != null) {
                 pc.destroy();
             }
