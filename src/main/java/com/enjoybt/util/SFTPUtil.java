@@ -43,7 +43,6 @@ public class SFTPUtil{
 	private static Session session = null;
     private static Channel channel = null;
     public static ChannelSftp channelSftp = null;
-    private static String REMOTE_ROOT = "/home/volcano/kma2volcano";
 
     /**
 
@@ -190,12 +189,12 @@ public class SFTPUtil{
         return true;
     }
     
-    public static List<String> getList() {
+    public static List<String> getList(String remoteRoot) {
         List<String> fileList = new ArrayList<String>();
         try{
             
             //경로 확인 필요
-            channelSftp.cd(REMOTE_ROOT);
+            channelSftp.cd(remoteRoot);
             
             Vector<LsEntry> files = channelSftp.ls("*.gb2");
             

@@ -116,8 +116,6 @@ public class SftpServiceImpl implements SftpService {
                     //개별 파일 temp폴더에 저장완료 시간
                     updateFileTempLog(file_no);
 
-                } else {
-
                 }
 
             }
@@ -153,6 +151,9 @@ public class SftpServiceImpl implements SftpService {
             return;
         }
 
+        int file_no = 0;
+        int log_sn = insertDownStartLog("admin downWorking!");
+
         logger.info("start downWorking...........");
 
         int port = Integer.parseInt(PORT);
@@ -160,7 +161,7 @@ public class SftpServiceImpl implements SftpService {
         try {
             init(SFTP_IP, port, ID, PW);
 
-            List<String> fileList = getList();
+            List<String> fileList = getList(REMOTE_ROOT);
 
             for (String file : fileList) {
 
@@ -172,6 +173,9 @@ public class SftpServiceImpl implements SftpService {
                 String local = TEMP_FOLDER;
 
                 boolean check = false;
+
+                file_no = insertFileStartLog(log_sn, fileName);
+                logger.info(fileName + " downloading...");
 
                 try {
                     check = downSFtp(remote, fileName, local);
@@ -186,10 +190,24 @@ public class SftpServiceImpl implements SftpService {
                     if (deleteSFtp(remote, fileName)) {
                         logger.info(fileName + "delete finish");
                     }
+                    //개별 파일 temp폴더에 저장완료 시간
+                    updateFileTempLog(file_no);
                 }
             }
 
+            //temp폴더에 저장완료 시간 update
+            updateTempTime(log_sn);
+
+            //tempFolder 파일 결과폴더로 이동
             umFileMove();
+
+            if (downWorkingCheckSuccess(fileList)) {
+                logger.info("file check finish : result Y, log_sn : " + log_sn);
+                updateEndLog(log_sn, "Y");
+            } else {
+                logger.info("file check finish : result N, log_sn : " + log_sn);
+                updateEndLog(log_sn, "N");
+            }
 
 //          sftpService.disconnect();
 //          logger.info("sftp 연결 종료");
@@ -241,8 +259,8 @@ public class SftpServiceImpl implements SftpService {
         sftpUtil.disconnection();
     }
 
-    public List<String> getList() {
-        return sftpUtil.getList();
+    public List<String> getList(String remoteRoot) {
+        return sftpUtil.getList(remoteRoot);
     }
 
     @Override
@@ -343,6 +361,24 @@ public class SftpServiceImpl implements SftpService {
             String fileName = e.getValue();
             targetFolder = LOCAL_FOLDER + "/r120." + fileName.substring(25, 33) + ".t" + fileName
                             .substring(33, 35) + "z";
+
+            result = checkTargetFolder(targetFolder,fileName);
+
+            if(result == false){
+                return false;
+            }
+
+        }
+
+        return result;
+    }
+
+    public boolean downWorkingCheckSuccess(List<String> fileList){
+        boolean result = false;
+        String targetFolder;
+        for (String fileName : fileList) {
+            targetFolder = LOCAL_FOLDER + "/r120." + fileName.substring(25, 33) + ".t" + fileName
+                    .substring(33, 35) + "z";
 
             result = checkTargetFolder(targetFolder,fileName);
 
