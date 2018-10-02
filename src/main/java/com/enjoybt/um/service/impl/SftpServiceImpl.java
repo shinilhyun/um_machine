@@ -347,16 +347,12 @@ public class SftpServiceImpl implements SftpService {
                 if (pcErrorLog == null) break;
                 logger.info(pcErrorLog);
             }
-            pc.waitFor();
 
         } catch (Exception e) {
             logger.info("ERROR", e);
         } finally {
-
-
-            if (pc != null) {
-                pc.destroy();
-            }
+            pc.waitFor();
+            if (pc != null) pc.destroy();
         }
     }
 
