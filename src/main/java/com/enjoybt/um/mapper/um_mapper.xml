@@ -3,6 +3,9 @@
 
 <mapper namespace="um">
 
+    <select id="test" resultType="java.lang.String">
+        select MSG_EN from tb_message_resource
+    </select>
     <insert id="insertStartLog" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="log_sn">
 		INSERT INTO TB_UM_DOWN_LOG
             (LOG_SN, CONTENT)
@@ -46,13 +49,21 @@
             END_TIME = now(),
             SUCCESS_FLAG = #{flag}
         WHERE
-            FILE_NAME = #{file_name}
+            FILE_NO = #{file_no}
     </update>
 
     <update id="updateFileComment" parameterType="java.util.Map">
         UPDATE TB_UM_DOWN_FILE_LOG
         SET COMMENT = #{comment}
         WHERE
-            FILE_NAME = #{file_name}
+            FILE_NO = #{file_no}
     </update>
+
+    <select id="getFileNoFromFilename" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT FILE_NO
+        FROM TB_UM_DOWN_FILE_LOG
+        WHERE FILE_NAME = #{fileName}
+        ORDER BY FILE_NO DESC
+        LIMIT 1
+    </select>
 </mapper>

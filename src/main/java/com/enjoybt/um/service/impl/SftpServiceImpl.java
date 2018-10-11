@@ -103,7 +103,7 @@ public class SftpServiceImpl implements SftpService {
                     check = downSFtp(remote, fileName, local);
                 } catch (Exception e) {
                     logger.info("download fail(maybe already download file..)");
-                    updateFileComment(fileName,"sftp download fail.. (maybe already downloaded file)");
+                    updateFileComment(file_no,"sftp download fail.. (maybe already downloaded file)");
                     check = false;
                 }
 
@@ -182,7 +182,7 @@ public class SftpServiceImpl implements SftpService {
                     check = downSFtp(remote, fileName, local);
                 } catch (Exception e) {
                     logger.info("download fail(maybe already downloaded)");
-                    updateFileComment(fileName,"sftp download fail.. (maybe already downloaded file)");
+                    updateFileComment(file_no,"sftp download fail.. (maybe already downloaded file)");
                     check = false;
                 }
 
@@ -270,6 +270,8 @@ public class SftpServiceImpl implements SftpService {
         boolean result = true;
         File ff = new File(TEMP_FOLDER);
         File[] fileList = ff.listFiles();
+        int fileNo;
+        int fileNo2;
 
         String targetFolder = null;
         for (File record : fileList) {
@@ -277,16 +279,26 @@ public class SftpServiceImpl implements SftpService {
             //r120_v070_erea_pres_h066.2017111000
 
             String fileName = record.getName();
+
             String arr[] = fileName.split("_");
-            String fileName2 = null;
+            String fileName2 = arr[0] + "_" + arr[1] + "_" + arr[2] + "_unis_" + arr[4];
+
+            fileNo = getLastFileNoFromFilename(fileName);
+            fileNo2 = getLastFileNoFromFilename(fileName2);
+
+            if (fileNo == -1 || fileNo2 == -1) {
+                result = false;
+                continue;
+            }
 
             try {
 
                 if (arr[3].equals("pres")) {
-                    fileName2 = arr[0] + "_" + arr[1] + "_" + arr[2] + "_unis_" + arr[4];
+
                     File f = new File(TEMP_FOLDER + "/" + fileName2);
 
                     if (f.exists()) {
+
                         logger.info(arr[4] + "file check finished, file move start!");
                         // 파일 1, 2 모두 경로 이동
                         targetFolder =
@@ -302,22 +314,22 @@ public class SftpServiceImpl implements SftpService {
 
 
                         fileCopy(TEMP_FOLDER + "/" + fileName, targetFolder + "/" + fileName);
-                        updateFileEndLog(fileName, "Y");
+                        updateFileEndLog(fileNo, "Y");
                         fileCopy(TEMP_FOLDER + "/" + fileName2, targetFolder + "/" + fileName2);
-                        updateFileEndLog(fileName2, "Y");
+                        updateFileEndLog(fileNo2, "Y");
                     } else {
                         logger.info(fileName2 + "file not exist.. so don't move file");
-                        updateFileComment(fileName,"File pairs do not match");
-                        updateFileComment(fileName2,"File pairs do not match");
+                        updateFileComment(fileNo,"File pairs do not match");
+                        updateFileComment(fileNo2,"File pairs do not match");
                         result = false;
                     }
                 }
             } catch (InterruptedException ie) {
                 logger.info(fileName2 + "file move fail!!", ie);
-                updateFileComment(fileName2,"file Move fail : " + ie);
+                updateFileComment(fileNo2,"file Move fail : " + ie);
             } catch (Exception e) {
                 logger.info(fileName2 + "file not exist.. so don't move file");
-                updateFileComment(fileName2,"file Move fail : " + e);
+                updateFileComment(fileNo2,"file Move fail : " + e);
                 result = false;
             }
 
@@ -471,10 +483,10 @@ public class SftpServiceImpl implements SftpService {
         }
     }
 
-    public void updateFileEndLog(String fileName, String flag) {
+    public void updateFileEndLog(int fileNo, String flag) {
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("file_name", fileName);
+        params.put("file_no", fileNo);
         params.put("flag", flag);
         try {
             dao.update("um.updateFileEndLog",params);
@@ -483,10 +495,10 @@ public class SftpServiceImpl implements SftpService {
         }
     }
 
-    public void updateFileComment(String fileName, String comment) {
+    public void updateFileComment(int fileNo, String comment) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("comment", comment);
-        params.put("file_name", fileName);
+        params.put("file_no", fileNo);
 
         try {
             dao.update("um.updateFileComment", params);
@@ -494,4 +506,17 @@ public class SftpServiceImpl implements SftpService {
             logger.info("ERROR", e);
         }
     }
+
+    public int getLastFileNoFromFilename(String fileName) {
+        int fileNo = -1;
+        try {
+            fileNo = (Integer)dao.selectObject("um.getFileNoFromFilename", fileName);
+        } catch (Exception e) {
+            logger.info("file_no : " + fileNo);
+            logger.info("fileName : " + fileName);
+            logger.info("getLastFileNo ERROR", e);
+        }
+        return fileNo;
+    }
+
 }
