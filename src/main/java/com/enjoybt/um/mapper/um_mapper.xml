@@ -2,10 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd"> 
 
 <mapper namespace="um">
-
-    <select id="test" resultType="java.lang.String">
-        select MSG_EN from tb_message_resource
-    </select>
     <insert id="insertStartLog" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="log_sn">
 		INSERT INTO TB_UM_DOWN_LOG
             (LOG_SN, CONTENT)

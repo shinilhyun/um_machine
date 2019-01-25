@@ -58,22 +58,24 @@ public class SFTPController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
     public String home(Locale locale, Model model) {
         logger.info("Welcome home! The client locale is {}.", locale);
-        
         Date date = new Date();
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-        
         String formattedDate = dateFormat.format(date);
-
         model.addAttribute("serverTime", formattedDate );
         
         return "home";
     }
-	
+
+	/**
+	 * um 기상장 다운로드 (외부에서 요청들어오면 실행)
+	 * 다운로드 통보문 수신 시 실행 됨
+	 * @param map
+	 * @return
+	 */
 	@RequestMapping(value = "/um.do", method = RequestMethod.POST)
 	@ResponseBody
 	public String getUmData(@RequestBody MultiValueMap<String,String> map) {
-		
-	    
+
 	    logger.info("ip : " + SFTP_IP);
 	    logger.info("port : " + PORT);
 	    logger.info("id : " + ID);
@@ -84,7 +86,10 @@ public class SFTPController {
        
 	    return "success";
 	}
-	
+
+	/***
+	 * 근무자 수동 다운로드 (원격지의 미다운로드 파일 전부 다운로드 시작)
+	 */
 	@RequestMapping(value = "/downWorking.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
 	public void downWorking() {
@@ -92,6 +97,10 @@ public class SFTPController {
         sftpService.downWorking();
 	}
 
+	/**
+	 * SFTP 연결 수동 disconnect
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/disconnect.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
 	public void disconnect() throws IOException {
@@ -99,6 +108,11 @@ public class SFTPController {
 	    sftpService.disconnect();
 	}
 
+	/**
+	 * 임시 파일경로의 잔여 기상장 파일 체크하여 짝 맞으면 이동시키도록 명령
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/move.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
 	public String move() throws IOException {

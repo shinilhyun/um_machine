@@ -12,8 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sound.midi.MidiDevice.Info;
 
+import com.enjoybt.um.service.UmFileSearchService;
+import com.enjoybt.util.UmFileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ErrorCoded;
 import org.springframework.stereotype.Controller;
@@ -38,7 +41,10 @@ public class ApiController {
 
 	@Value("#{config['SIMULATION.UM.ROOT']}")
 	private String SIMUL_UM_PATH;
-	
+
+    @Autowired
+    UmFileSearchService umFileSearchService;
+
 	/**
 	 * @title				getUmFileList
 	 * @author 	 		shin
@@ -58,29 +64,20 @@ public class ApiController {
             @RequestParam(value = "sub") String sub, @RequestParam(value = "tmfc") String tmfc,
             HttpSession session, HttpServletResponse response) throws Exception {
 
+	    String result = null;
+
 	    try{
-
-            String folder = ROOT + "/" + nwp + "." + tmfc.substring(0, 8)+".t"+tmfc.substring(8)+"z";
-            File f = new File(folder);
-
-            if(!f.exists()){
-                response.sendError(404);
-            }
-
+            umFileSearchService.hasUmFile(nwp, sub, tmfc);
+            result = umFileSearchService.getUmFileList(nwp, sub, tmfc);
         }catch (Exception e) {
             response.sendError(404);
-	        logger.info("폴더검색에러");
+	        logger.info("getUmList error");
             e.printStackTrace();
 
             return "404";
         }
 
-        StringBuffer sb = new StringBuffer("");
-        sb.append(subDirList(ROOT, nwp, sub, tmfc));
-      
-        logger.info(sb.toString());
-        
-        return sb.toString();
+        return result;
     }
 
     /**
@@ -96,7 +93,6 @@ public class ApiController {
      * @param response
      * @throws Exception
      */
-//    @RequestMapping(value = "/url/nwp_file_down.php?", method = {RequestMethod.POST, RequestMethod.GET})
     @RequestMapping(value = "/um/getUmFile.do", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
     public void getUmFile(@RequestParam(value = "nwp") String nwp,
@@ -106,47 +102,19 @@ public class ApiController {
 
         //ex) tmfc = 2017083100
 
-        String folder = folder = ROOT + "/" + nwp + "." + tmfc.substring(0, 8)+".t"+tmfc.substring(8)+"z";
-
-        String fileName = nwp + "_v070_erea_" + sub + "_h" + hh_ef + "." + tmfc + ".gb2";
+		String folder = UmFileUtil.getUmFileFolder(ROOT, nwp, sub, tmfc);
+		String fileName = UmFileUtil.getUmDownloadFileName(nwp, sub, hh_ef, tmfc);
 	    File file = new File(folder+"/"+fileName);
 
 	    if(file.exists()) {
-            response.setHeader("Content-Disposition",
-                    "attachment;filename=" + file.getName() + ";");
+            response.setHeader("Content-Disposition","attachment;filename=" + file.getName() + ";");
             response.setContentType("text/plain");
-
             FileInputStream fileIn = new FileInputStream(file); //파일 읽어오기
             FileCopyUtils.copy(fileIn, response.getOutputStream());
-
             response.flushBuffer();
         } else {
 	        response.sendError(404);
         }
 	}
-    
-    public String subDirList(String source,String nwp, String sub, String tmfc) throws IOException{
-
-		System.out.println("source - " +source);
-		File dirFile = new File(source);
-        File []fileList = dirFile.listFiles();
-        StringBuffer sb = new StringBuffer("");
-        
-        for (File tempFile : fileList) {
-            
-            if (tempFile.isFile()) {
-                
-                if (tempFile.getName().contains(nwp) && tempFile.getName().contains(sub)
-                        && tempFile.getName().contains(tmfc)) {
-                    
-                    sb.append(tempFile.getName() + ", " + tempFile.length() + ",= \n");
-                }
-            } else if (tempFile.isDirectory()) {
-                sb.append(subDirList(tempFile.getCanonicalPath().toString(), nwp, sub, tmfc));
-            }
-        }
-        
-        return sb.toString();
-    }
 
 }
