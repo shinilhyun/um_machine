@@ -1,21 +1,17 @@
 package com.enjoybt.um.service.impl;
 
 import com.enjoybt.common.dao.CommonDAO;
+import com.enjoybt.um.DownNotice;
 import com.enjoybt.um.service.LogService;
 import com.enjoybt.um.service.SftpService;
 import com.enjoybt.util.SFTPUtil;
 import com.enjoybt.util.UmFileUtil;
-import com.enjoybt.util.XmlParsingUtil;
 import com.jcraft.jsch.SftpException;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import org.jdom2.Document;
+
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,23 +69,19 @@ public class SftpServiceImpl implements SftpService {
         }
 
         try {
-
             logger.info("xmlData \n" + xmlData);
-
-            //XML 파일 파싱하여 다운로드 할 파일 정보(list) 가져옴
-            Element rootElement = XmlParsingUtil.getXmlDocRootElement(xmlData);
-            String filepath = XmlParsingUtil.getRemoteFilePath(rootElement);
-            List<Element> fileList = XmlParsingUtil.getFileListFromXml(rootElement);
 
             //sftp remote 연결
             int port = Integer.parseInt(PORT);
             disconnect();
             init(sftpIp, port, ID, PW);
 
-            for (Element record : fileList) {
+            //XML 파일 파싱하여 다운로드 할 파일 정보(list) 가져옴
+            DownNotice downInfo = new DownNotice(xmlData);
+
+            for (Element record : downInfo.getFileList()) {
                 String fileName = record.getValue();
-                String remote = filepath;
-                String local = tempFolder;
+                String remote = downInfo.getFilePath();
                 boolean isDownSuccess = false;
 
                 //ftp에서 파일 다운로드
@@ -97,7 +89,7 @@ public class SftpServiceImpl implements SftpService {
                 file_no = logService.insertFileStartLog(log_sn, fileName);
 
                 try {
-                    isDownSuccess = downSFtp(remote, fileName, local);
+                    isDownSuccess = downSFtp(remote, fileName, tempFolder);
                 } catch (Exception e) {
                     logger.info("download fail(maybe already download file..)");
                     logService.updateFileComment(file_no,"sftp download fail.. (maybe already downloaded file)");
@@ -121,7 +113,7 @@ public class SftpServiceImpl implements SftpService {
             //tempFolder 파일 결과폴더로 이동
             umFileMove();
 
-            if (checkSuccess(fileList)) {
+            if (checkSuccess(downInfo.getFileList())) {
                 logger.info("file check finish : result Y, log_sn : " + log_sn);
                 logService.updateEndLog(log_sn, "Y");
             } else {
