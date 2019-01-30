@@ -24,8 +24,6 @@
 
     <!--원격 폴더구조(/에서 기상장파일까지경로)-->
     <entry key="REMOTE_ROOT">/remote/</entry>
-    <entry key="VDRS_URL">http://localhost:8080/proxy/umResult.do</entry>
-
     <entry key="MODE">default</entry>
 
     <entry key="CMD.MOVE">mv</entry>

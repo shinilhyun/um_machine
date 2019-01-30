@@ -4,10 +4,12 @@
     <comment>
         === mode 변경 ===
         real_op : 행망
+        dev_op  : 화산 개발 피씨
+
         default : 본사 개발
     </comment>
 
 
-    <entry key="MODE">default</entry>
+    <entry key="MODE">dev</entry>
 
 </properties>

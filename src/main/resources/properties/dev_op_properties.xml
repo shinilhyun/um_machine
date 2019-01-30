@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd" >
 <properties>
-    <comment>운영(real_op)</comment>
+    <comment>화산 개발 PC(dev_op)</comment>
 
     <!--DB-->
     <entry key="JDBC.POSTGRESQL.DRIVER">org.postgresql.Driver</entry>
-    <entry key="JDBC.POSTGRESQL.URL">jdbc:postgresql://10.175.84.27:5432/vdrs</entry>
+    <entry key="JDBC.POSTGRESQL.URL">jdbc:postgresql://10.175.84.25:5432/vdrs_tr</entry>
     <entry key="JDBC.POSTGRESQL.USERNAME">postgres</entry>
     <entry key="JDBC.POSTGRESQL.PASSWORD">postgres123#</entry>
 
-    <entry key="SFTP_IP">10.28.64.28</entry>
+    <entry key="SFTP_IP">10.32.120.5</entry>
     <entry key="SFTP_PORT">1022</entry>
     <entry key="SFTP_ID">volcano</entry>
     <entry key="SFTP_PW">ndms2kma01!</entry>
 
 
     <!--저장될 로컬폴더 ex) C:/um/ftpTest-->
-    <entry key="SFTP_TARGET">/DATA1/um</entry>
+    <entry key="SFTP_TARGET">c:/sftp</entry>
 
-    <entry key="SFTP_TEMPFOLDER">/DATA1/umTemp</entry>
+    <entry key="SFTP_TEMPFOLDER">c:/sftp/temp</entry>
 
     <!--SFTP 로컬 폴더와 동일하게 설정-->
-    <entry key="API_ROOT">/DATA1/um</entry>
+    <entry key="API_ROOT">c:/sftp</entry>
 
     <!--원격 폴더구조(/에서 기상장파일까지경로)-->
-    <entry key="REMOTE_ROOT">/data/volcano/kma2volcano</entry>
+    <entry key="REMOTE_ROOT">/remote/</entry>
 
-    <entry key="CMD.MOVE">mv</entry>
+    <entry key="CMD.MOVE">move</entry>
 
 </properties>

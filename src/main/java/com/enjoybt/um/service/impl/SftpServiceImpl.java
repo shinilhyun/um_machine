@@ -41,9 +41,6 @@ public class SftpServiceImpl implements SftpService {
     @Value("#{config['REMOTE_ROOT']}")
     private String remoteRoot;
 
-    @Value("#{config['VDRS_URL']}")
-    private String vdrsUrl;
-
     @Value("#{config['SFTP_TEMPFOLDER']}")
     private String tempFolder;
 
