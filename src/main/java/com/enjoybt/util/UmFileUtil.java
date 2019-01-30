@@ -74,7 +74,7 @@ public class UmFileUtil {
          * 원격지에 아래와 같이 기상장 파일이 저장되어 있다고 가정하겠습니다.
          * r120_v070_erea_unis_h087_GDPS_SAMPLE.2018121600.gb2
          */
-        String origin = "r120_v070_erea_unis_h087_GDPS_SAMPLE.2018121600.gb2";     // 원격지에 저장되어 있는 원래 파일명
+        String origin = originName;     // 원격지에 저장되어 있는 원래 파일명
         String replaceName = null;      // 화산 시스템에 저장될 파일명
 
         replaceName = origin.replace("_GDPS_SAMPLE", "");
