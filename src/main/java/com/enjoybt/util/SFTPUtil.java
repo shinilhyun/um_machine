@@ -164,9 +164,11 @@ public class SFTPUtil{
             if (!targetPath.exists()) {     // 폴더 없으면 생성
                 targetPath.mkdirs();
             }
-            
-            System.out.println("targetPath+fileName : " + path + "/" + downloadFileName);
-            File f = new File(path + "/"+ downloadFileName);
+
+            //원격지의 기상장 파일명 변경시 파일명 맞춰주는 매서드
+            String fileSaveName = UmFileUtil.changeFileNameVdrsStyle(downloadFileName);
+            System.out.println("targetPath+fileName : " + path + "/" + fileSaveName);
+            File f = new File(path + "/"+ fileSaveName);
             out = new FileOutputStream(f);
             int i;
             while ((i = in.read()) != -1) {

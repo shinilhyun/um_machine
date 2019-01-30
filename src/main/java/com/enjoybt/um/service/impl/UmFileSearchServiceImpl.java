@@ -61,7 +61,6 @@ public class UmFileSearchServiceImpl implements UmFileSearchService {
 
                 if (tempFile.getName().contains(nwp) && tempFile.getName().contains(sub)
                         && tempFile.getName().contains(tmfc)) {
-
                     sb.append(tempFile.getName() + ", " + tempFile.length() + ",= \n");
                 }
             } else if (tempFile.isDirectory()) {

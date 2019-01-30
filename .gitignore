@@ -133,5 +133,5 @@ fabric.properties
 
 *.iml
 
-.idea/
-target/
+.idea
+target

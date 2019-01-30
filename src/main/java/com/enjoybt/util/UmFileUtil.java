@@ -35,4 +35,50 @@ public class UmFileUtil {
     public static String getTargetFolderPath(String localFolder, String fileName) {
         return localFolder + "/r120." + fileName.substring(25, 33) + ".t" + fileName.substring(33, 35) + "z";
     }
+
+    /***
+     * 원격지의 기상장 파일명 변경 시 [화산 기상장 파일 저장방식] 이름으로 변경
+     *
+     * ===============[화산 기상장 파일 저장 방식]==================
+     *    형식   : r120_v070_erea_[sub]_h[hhef]_[yyyyMMddHH].gb2
+     *    ex ) r120_v070_erea_unis_h087.2018121600.gb2
+     *
+     *    [sub] : unis, pres
+     *    [hhef] : 관측시간 ex) 003, 006 ~ 084
+     *==========================================================
+     * @param originName
+     * @return
+     */
+    public static String changeFileNameVdrsStyle(String originName) {
+
+        String origin = originName;
+        String replaceName = origin;
+
+        /**
+         *   원격지 파일명을 화산시스템 기상장 파일명으로 변경하는 부분 구현
+         *   (현재는 변경이 없어서 그대로 전달)
+         */
+
+        return replaceName;
+    }
+
+
+    /***
+     * 파일명 변경 시 변경해야하는 changeFileNameVdrsStyle() 메서드의 예제입니다.
+     * @param originName
+     * @return
+     */
+    public static String changeFileNameVdrsStyleExample(String originName) {
+
+        /**
+         * 원격지에 아래와 같이 기상장 파일이 저장되어 있다고 가정하겠습니다.
+         * r120_v070_erea_unis_h087_GDPS_SAMPLE.2018121600.gb2
+         */
+        String origin = "r120_v070_erea_unis_h087_GDPS_SAMPLE.2018121600.gb2";     // 원격지에 저장되어 있는 원래 파일명
+        String replaceName = null;      // 화산 시스템에 저장될 파일명
+
+        replaceName = origin.replace("_GDPS_SAMPLE", "");
+
+        return replaceName;
+    }
 }

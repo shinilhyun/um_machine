@@ -314,10 +314,9 @@ public class SftpServiceImpl implements SftpService {
         String command = moveCommand + " " + inFileName + " " + outFileName;
 
         try {
-
             logger.info("command = " + command);
-            pc = rt.exec(command);
 
+            pc = rt.exec(command);
             ebr = new BufferedReader(new InputStreamReader(pc.getErrorStream()));
 
             while(true) {
@@ -325,7 +324,6 @@ public class SftpServiceImpl implements SftpService {
                 if (pcErrorLog == null) break;
                 logger.info(pcErrorLog);
             }
-
         } catch (Exception e) {
             logger.info("ERROR", e);
         } finally {
@@ -353,9 +351,9 @@ public class SftpServiceImpl implements SftpService {
     public boolean downWorkingCheckSuccess(List<String> fileList){
         boolean result = false;
         String targetFolder;
+
         for (String fileName : fileList) {
             targetFolder = UmFileUtil.getTargetFolderPath(localFolder, fileName);
-
             result = checkTargetFolder(targetFolder,fileName);
 
             if(result == false){
@@ -367,13 +365,11 @@ public class SftpServiceImpl implements SftpService {
     }
 
     public boolean checkTargetFolder(String path, String fileName) {
-
         File dirFile = new File(path);
         File[] fileList = dirFile.listFiles();
         boolean result= false;
 
         for (File tempFile : fileList) {
-
             if (tempFile.getName().equals(fileName)) {
                 return true;
             }
